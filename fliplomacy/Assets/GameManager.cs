@@ -303,26 +303,26 @@ public class GameManager : MonoBehaviour
             OnSwipeBottom();
         }
     }
-    private void OnSwipeLeft() {
+    public void OnSwipeLeft() {
         Debug.Log("Left");
         FloppyMove(-1,0);
         //ShowText.text = "Left";
     }
 
-    private void OnSwipeRight() {
+    public void OnSwipeRight() {
         Debug.Log("Right");
         FloppyMove(1, 0);
         //ShowText.text = "Right";
 
     }
 
-    private void OnSwipeTop() {
+    public void OnSwipeTop() {
         Debug.Log("Top");
         FloppyMove(0,1);
         //ShowText.text = "Top";
     }
 
-    private void OnSwipeBottom() {
+    public void OnSwipeBottom() {
         Debug.Log("Down");
         FloppyMove(0,-1);
         //ShowText.text = "Botton";
@@ -331,157 +331,157 @@ public class GameManager : MonoBehaviour
     private void FloppyMove(int x, int y)
     {
         
-        //var nextX = floppyPosition.x + x;
-        //var nextY = floppyPosition.y + y;
-        //List<GameObject> flagsInStep = new List<GameObject>();// dung cho flag tile
+        var nextX = floppyPosition.x + x;
+        var nextY = floppyPosition.y + y;
+        List<GameObject> flagsInStep = new List<GameObject>();// dung cho flag tile
 
-        //if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)// && _allCells[nextX, nextY].typeTile != 20)
-        //{
-        //    if(_allCells[nextX, nextY].typeTile == 1) // flagtile
-        //    {
-        //        FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.x);
+        if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)// && _allCells[nextX, nextY].typeTile != 20)
+        {
+            if(_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
+            {
+               FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.x);
 
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 2)
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //        _allCells[nextX, nextY].typeTile = 20;
-        //        var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
-        //        DisappearingObj.Add(disappearingTileFunc);
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 20)
-        //    {
-        //        //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
-        //        // cai nay dung trong truong hop muon nhay qua o da bi an
-        //        // con khong thi khong lam gi ca
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 6)
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //        for(int i = 0; i< allBombMarketTile.Count; i++)
-        //        {
-        //            allBombMarketTile[i].gameObject.SetActive(false);
-        //            int mx = (int) allBombMarketTile[i].transform.position.x ;
-        //            int my = (int)allBombMarketTile[i].transform.position.y;
-        //            _allCells[mx, my].typeTile = 20;
-
-        //        }
-        //        //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
-        //        // cai nay dung trong truong hop muon nhay qua o da bi an
-        //        // con khong thi khong lam gi ca
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 41)
-        //    {
-        //        FloppyJump(nextX, nextY);
+            }
+        else if (_allCells[nextX, nextY].typeTile == 2.ToString())
+        {
+            FloppyJump(nextX, nextY);
+            _allCells[nextX, nextY].typeTile = 20.ToString();
+            var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
+            DisappearingObj.Add(disappearingTileFunc);
+        }
+        else if (_allCells[nextX, nextY].typeTile == 20.ToString())
+        {
+            //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
+            // cai nay dung trong truong hop muon nhay qua o da bi an
+            // con khong thi khong lam gi ca
+        }
+        else if (_allCells[nextX, nextY].typeTile[0] == '6')
+        {
+            FloppyJump(nextX, nextY);
+            var connetedBombMarked = _allCells[nextX, nextY].ob.GetComponent<BombTile>().ConnetedBombMarked;
+            for(int i = 0; i< connetedBombMarked.Count; i++)
+            {
+                connetedBombMarked[i].gameObject.SetActive(false);
+                int mx = (int) connetedBombMarked[i].transform.position.x ;
+                int my = (int)connetedBombMarked[i].transform.position.y;
+                _allCells[mx, my].typeTile = 20.ToString();
+        
+            }
+            //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
+            // cai nay dung trong truong hop muon nhay qua o da bi an
+            // con khong thi khong lam gi ca
+        }
+        else if (_allCells[nextX, nextY].typeTile == 40.ToString())
+        {
+            FloppyJump(nextX, nextY);
                 
-        //        for (int i = 0; i< FlagsAllCell.Count; i++)
-        //        {
-        //            if(FlagsAllCell[i].x == _allCells[nextX, nextY].x)
-        //            {
-        //                //Debug.Log(FlagsAllCell);
-        //                FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
-        //            }
-        //        }
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 42)
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //        //Debug.Log(_allCells[nextX, nextY].x +"   "+ _allCells[nextX, nextY].y);
-        //        for (int i = 0; i < FlagsAllCell.Count; i++)
-        //        {
-        //            if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
-        //            {
-        //                FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
-        //            }
-        //        }
-        //    }
-        //    else
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //    }
-        //} 
+            for (int i = 0; i< FlagsAllCell.Count; i++)
+            {
+                if(FlagsAllCell[i].x == _allCells[nextX, nextY].x)
+                {
+                    //Debug.Log(FlagsAllCell);
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
+                }
+            }
+        }
+        else if (_allCells[nextX, nextY].typeTile == 41.ToString())
+        {
+            FloppyJump(nextX, nextY);
+            //Debug.Log(_allCells[nextX, nextY].x +"   "+ _allCells[nextX, nextY].y);
+            for (int i = 0; i < FlagsAllCell.Count; i++)
+            {
+                if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
+                {
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
+                }
+            }
+           }
+        else
+        {
+            FloppyJump(nextX, nextY);
+        }
+        } 
 
     }
     public void FlagTileFunction(int nextX, int nextY, List<GameObject> flagsInStep,
         int x, int y, int startFloppyPositionx, int startFloppyPositiony)
     {
-        //if (_allCells[nextX, nextY].typeTile == 1) // flagtile
-        //{
-        //    flagsInStep.Add(_allCells[nextX, nextY].ob);
-        //    nextX += x;
-        //    nextY += y;
-        //    if(_allCells[nextX, nextY].typeTile == 1)
-        //    {
-        //        FlagTileFunction(nextX, nextY, flagsInStep, x, y, startFloppyPositionx, startFloppyPositiony);
-        //    }
-        //    else if(_allCells[nextX, nextY].typeTile == 20)
-        //    {
+        if (_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
+        {
+            flagsInStep.Add(_allCells[nextX, nextY].ob);
+            nextX += x;
+            nextY += y;
+            if(_allCells[nextX, nextY].typeTile == 1.ToString())
+            {
+                FlagTileFunction(nextX, nextY, flagsInStep, x, y, startFloppyPositionx, startFloppyPositiony);
+            }
+            else if(_allCells[nextX, nextY].typeTile == 20.ToString())
+            {
 
-        //    }
-        //    else if (_allCells[nextX, nextY].typeTile == 2)
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //        _allCells[nextX, nextY].typeTile = 20;
-        //        var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
-        //        DisappearingObj.Add(disappearingTileFunc);
-        //    }
-        //    else if(nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
-        //    {
-        //        FloppyJump(nextX, nextY);
+            }
+            else if (_allCells[nextX, nextY].typeTile == 2.ToString())
+            {
+                FloppyJump(nextX, nextY);
+                _allCells[nextX, nextY].typeTile = 20.ToString();
+                var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
+                DisappearingObj.Add(disappearingTileFunc);
+            }
+            else if(nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
+            {
+                FloppyJump(nextX, nextY);
 
-        //        for(int i = 0; i < flagsInStep.Count; i++)
-        //        {
-        //            var flagFunc = flagsInStep[i].GetComponent<FlagTile>();
-        //            flagFunc.ChangeFlag();
+                for(int i = 0; i < flagsInStep.Count; i++)
+                {
+                    var flagFunc = flagsInStep[i].GetComponent<FlagTile>();
+                    flagFunc.ChangeFlag();
 
-        //        }
-        //        //endstep
-        //    }
-        //    else
-        //    {
-        //        FloppyJump(startFloppyPositionx, startFloppyPositiony);
-        //        //endstep
-        //    }
-        //}
+                }
+                //endstep
+            }
+            else
+            {
+                FloppyJump(startFloppyPositionx, startFloppyPositiony);
+                //endstep
+            }
+        }
     }
     public void DisappearingHideTileFunction(int nextX, int nextY,
         int x, int y, int startFloppyPositionx, int startFloppyPositiony)
     {
-        //if (_allCells[nextX, nextY].typeTile == 20) // DisappearingHideTile
-        //{
-        //    nextX += x;
-        //    nextY += y;
-        //    if (_allCells[nextX, nextY].typeTile == 20)
-        //    {
-        //        DisappearingHideTileFunction(nextX, nextY, x, y, startFloppyPositionx, startFloppyPositiony);
-        //    }
-        //    else if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
-        //    {
-        //        FloppyJump(nextX, nextY);
-        //        //endstep
-        //    }
-        //    else
-        //    {
-        //        FloppyJump(startFloppyPositionx, startFloppyPositiony);
-        //        //endstep
-        //    }
-        //}
+        if (_allCells[nextX, nextY].typeTile == 20.ToString()) // DisappearingHideTile
+        {
+            nextX += x;
+            nextY += y;
+            if (_allCells[nextX, nextY].typeTile == 20.ToString())
+            {
+                DisappearingHideTileFunction(nextX, nextY, x, y, startFloppyPositionx, startFloppyPositiony);
+            }
+            else if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
+            {
+                FloppyJump(nextX, nextY);
+                //endstep
+            }
+            else
+            {
+                FloppyJump(startFloppyPositionx, startFloppyPositiony);
+                //endstep
+            }
+        }
     }
     public void FloppyJump(int nextX, int nextY)
     {
-        //floppyPosition.x = nextX;
-        //floppyPosition.y = nextY;
-        //Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
-        //HideDisappearingTileAfterJumpOut();
+        floppyPosition.x = nextX;
+        floppyPosition.y = nextY;
+        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
+        HideDisappearingTileAfterJumpOut();
 
-        //if(_allCells[nextX, nextY].typeTile == 3)
-        //{
-        //    var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
-        //    Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
-        //    floppyPosition.x = (int)conneted.x;
-        //    floppyPosition.y = (int)conneted.y;
-
-        //}
+        if(_allCells[nextX, nextY].typeTile[0] == '3')
+        {
+            var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
+            Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
+            floppyPosition.x = (int)conneted.x;
+            floppyPosition.y = (int)conneted.y;
+        }
         //if(MovingTilesAllCell.Count > 0)
         //{
         //    bool inMoving = false;

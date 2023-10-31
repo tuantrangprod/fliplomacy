@@ -25,7 +25,7 @@ public class SwipeDetector : MonoBehaviour
     private const float mAngleRange = 30;
 
     // To recognize as swipe user should at lease swipe for this many pixels
-    private const float mMinSwipeDist = 50.0f;
+    private const float mMinSwipeDist = 20.0f;
 
     // To recognize as a swipe the velocity of the swipe
     // should be at least mMinVelocity
@@ -36,9 +36,13 @@ public class SwipeDetector : MonoBehaviour
     private float mSwipeStartTime;
 
     public TextMeshProUGUI ShowText;
+    FloppyControll floppyControll;
+    public GameManager gameManager;
 
     // Use this for initialization
-    void Start () {
+    void Start ()
+    {
+        floppyControll = gameObject.GetComponent<FloppyControll>();
     }
 
     // Update is called once per frame
@@ -50,11 +54,14 @@ public class SwipeDetector : MonoBehaviour
             mStartPosition = new Vector2(Input.mousePosition.x,
                                          Input.mousePosition.y);
             mSwipeStartTime = Time.time;
+            floppyControll.StartJumpAnim();
             
         }
 
         // Mouse button up, possible chance for a swipe
-        if (Input.GetMouseButtonUp(0)) {
+        if (Input.GetMouseButtonUp(0))
+        {
+            floppyControll.floppyOnStartReScale();
             float deltaTime = Time.time - mSwipeStartTime;
 
             Vector2 endPosition  = new Vector2(Input.mousePosition.x,
@@ -102,23 +109,30 @@ public class SwipeDetector : MonoBehaviour
     }
 
     private void OnSwipeLeft() {
-        mMessageIndex = 1;
+        // mMessageIndex = 1;
         ShowText.text = "Left";
-
+        gameManager.OnSwipeLeft();
+        floppyControll.JumpAnim();
     }
 
     private void OnSwipeRight() {
-        mMessageIndex = 2;
+        // mMessageIndex = 2;
         ShowText.text = "Right";
+        gameManager.OnSwipeRight();
+        floppyControll.JumpAnim();
     }
 
     private void OnSwipeTop() {
-        mMessageIndex = 3;
+        // mMessageIndex = 3;
         ShowText.text = "Top";
+        gameManager.OnSwipeTop();
+        floppyControll.JumpAnim();
     }
 
     private void OnSwipeBottom() {
-        mMessageIndex = 4;
+        // mMessageIndex = 4;
         ShowText.text = "Botton";
+        gameManager.OnSwipeBottom();
+        floppyControll.JumpAnim();
     }
 }
