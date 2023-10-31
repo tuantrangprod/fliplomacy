@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -125,6 +126,9 @@ public class GameManager : MonoBehaviour
                 }
                 else if (_allCells[i, j].typeTile[0] == '5')
                 {
+                    MovingTilesAllCell.Add(_allCells[i, j]);
+                   
+
                     //var tileMoving = tile.AddComponent<MovingTile>();
                     //tileMoving.MovingTileSprite = MovingTileSprite;
                     //tileMoving.SetUP();
@@ -132,10 +136,8 @@ public class GameManager : MonoBehaviour
                     //var movingtilegroup = gameObject.GetComponent<MovingTileGroup>();
                     //movingtilegroup.allMovingTile = allMovingTiles;
                     //movingtilegroup.SetUp();
-
-                    MovingTilesAllCell.Add(_allCells[i, j]);
                     //MovingtileGroup();
-                   // _allCells[i, j].typeTile = 1;
+                    // _allCells[i, j].typeTile = 1;
                     //FlagChaningNgangObj.Add(_allCells[i, j].ob);
                 }
                 else if (_allCells[i, j].typeTile[0] == '6')
@@ -198,18 +200,43 @@ public class GameManager : MonoBehaviour
                 movingTileGroups[movingTileID].arrayTile[movingTileStt] = MovingTilesAllCell[i].ob;
                 movingTileGroups[movingTileID].CurrentStep = Int32.Parse(MovingTilesAllCell[i].typeTile[2].ToString());
                 movingTileGroups[movingTileID].UporBack = Int32.Parse(MovingTilesAllCell[i].typeTile[3].ToString());
+
+
             }
             for(int i = 0; i< movingTileGroups.Count; i++)
             {
                 //movingTileGroups[i].CurrentStep = arrayTile[0]
                 movingTileGroups[i].MovingTileSprite = MovingTileSprite;
                 movingTileGroups[i].SetUp();
+                for(int j = 0; j < movingTileGroups[i].arrayTile.Length; j++)
+                {
+                    if(movingTileGroups[i].arrayTile[j] != null)
+                    {
+                       int x = (int)movingTileGroups[i].arrayTile[j].transform.position.x;
+                       int y = (int)movingTileGroups[i].arrayTile[j].transform.position.y;
+                        if (j != movingTileGroups[i].CurrentStep)
+                        {
+                            _allCells[x, y].typeTile = 20.ToString();
+                        }
+                        else
+                        {
+                            _allCells[x, y].typeTile = 5.ToString();
+                        }
+                    }
+                }
             }
+            
 
             ////550104
-           ///string id = "5" + numberOfList.text + (Int32.Parse(ShowPosition.text) - 1).ToString() + MovingDirectionUporBack.value.ToString() + MovingTileID.ToString() + i.ToString();
+            ///string id = "5" + numberOfList.text + (Int32.Parse(ShowPosition.text) - 1).ToString() + MovingDirectionUporBack.value.ToString() + MovingTileID.ToString() + i.ToString();
             //WormholeObj[1].GetComponent<WormholeTile>().ConnetedObject = WormholeObj[0].gameObject;
         }
+        List<MovingTileGroup> listOut = (from element in movingTileGroups
+
+                                         where element.arrayTile[0] != null
+
+                                         select (MovingTileGroup)element).ToList();
+        movingTileGroups = new List<MovingTileGroup>(listOut);
 
         if (allBombMarked.Count != 0)
         {
@@ -228,59 +255,97 @@ public class GameManager : MonoBehaviour
             allBombTile[0].GetComponent<BombTile>().ConnetedBombMarked = allBombMarketTile;
         }
     }
-    int CurrentStep = 2;
-    bool goBack = false;
     public void MovingtileGroup()
     {
 
-        for(int i = 0; i< MovingTilesAllCell.Count; i++)
+        for (int i = 0; i < movingTileGroups.Count; i++)
         {
-            //if(i == CurrentStep)
-            //{
-            //    MovingTilesAllCell[i].ob.SetActive(true);
-            //    int x = MovingTilesAllCell[i].x;
-            //    int y = MovingTilesAllCell[i].y;
-            //    _allCells[x, y].typeTile = 0;
-            //}
-            //else
-            //{
-            //    MovingTilesAllCell[i].ob.SetActive(false);
-            //    int x = MovingTilesAllCell[i].x;
-            //    int y = MovingTilesAllCell[i].y;
-            //    _allCells[x, y].typeTile = 20;
-            //}
+            //movingTileGroups[i].MovingTileSprite = MovingTileSprite;
+            //movingTileGroups[i].SetUp();
+            for (int j = 0; j < movingTileGroups[i].arrayTile.Length; j++)
+            {
+                if (movingTileGroups[i].arrayTile[j] != null)
+                {
+                    int x = (int)movingTileGroups[i].arrayTile[j].transform.position.x;
+                    int y = (int)movingTileGroups[i].arrayTile[j].transform.position.y;
+                    if (j != movingTileGroups[i].CurrentStep)
+                    {
+                        _allCells[x, y].typeTile = 20.ToString();
+                        movingTileGroups[i].arrayTile[j].gameObject.SetActive(false);
+                    }
+                    else
+                    {
+                        _allCells[x, y].typeTile = 5.ToString();
+                        movingTileGroups[i].arrayTile[j].gameObject.SetActive(true);
+                    }
+                }
+            }
         }
     }
     public void MovingtileGroupAfterJump()
     {
-        if (!goBack)
+        for (int i = 0; i < movingTileGroups.Count; i++)
         {
-          
-            if (CurrentStep >= MovingTilesAllCell.Count - 1)
+            GameObject[] arrayOut = (from element in movingTileGroups[i].arrayTile
+
+                            where element != null
+
+                              select (GameObject)element).ToArray();
+            if (movingTileGroups[i].UporBack == 0) // neu dang tien len
             {
-                goBack = true;
-                CurrentStep--;
+                if(movingTileGroups[i].CurrentStep >= arrayOut.Length-1) // set xem co phai dang o muc lon nhat co the tien len khong
+                {
+                    movingTileGroups[i].UporBack = 1; // neu co thi phai lui lai
+                    movingTileGroups[i].CurrentStep--;
+                }
+                else
+                {
+                    movingTileGroups[i].CurrentStep++; // neu khong tiep tuc tien len
+                }
             }
-            else
+            else if (movingTileGroups[i].UporBack == 1) // neu dang lui xuong
             {
-                CurrentStep++;
+                if (movingTileGroups[i].CurrentStep <= 0) // set xem co phai dang o muc nho nhat co the lui xuong khong
+                {
+                    movingTileGroups[i].UporBack = 0; // neu co thi phai tien len
+                    movingTileGroups[i].CurrentStep++;
+                }
+                else
+                {
+                    movingTileGroups[i].CurrentStep--; // neu khong tiep tuc lui xuong
+                }
             }
-            
+
         }
-        else
-        {
-            if (CurrentStep <=  0)
-            {
-                goBack = false;
-                CurrentStep++;
-            }
-            else
-            {
-                CurrentStep--;
-            }
-        }
+        MovingtileGroup();
+        //if (!goBack)
+        //{
+
+        //    if (CurrentStep >= MovingTilesAllCell.Count - 1)
+        //    {
+        //        goBack = true;
+        //        CurrentStep--;
+        //    }
+        //    else
+        //    {
+        //        CurrentStep++;
+        //    }
+
+        //}
+        //else
+        //{
+        //    if (CurrentStep <=  0)
+        //    {
+        //        goBack = false;
+        //        CurrentStep++;
+        //    }
+        //    else
+        //    {
+        //        CurrentStep--;
+        //    }
+        //}
         //if(floppyPosition.x == )
-            MovingtileGroup();
+
 
 
     }
@@ -482,22 +547,40 @@ public class GameManager : MonoBehaviour
             floppyPosition.x = (int)conneted.x;
             floppyPosition.y = (int)conneted.y;
         }
-        //if(MovingTilesAllCell.Count > 0)
-        //{
-        //    bool inMoving = false;
-        //    if (floppyPosition.x == MovingTilesAllCell[CurrentStep].x && floppyPosition.y == MovingTilesAllCell[CurrentStep].y)
-        //    {
-        //        inMoving = true;
-        //    }
-        //    MovingtileGroupAfterJump();
-        //    if (inMoving)
-        //    {
-        //        Floppy.transform.position = new Vector3(MovingTilesAllCell[CurrentStep].x, MovingTilesAllCell[CurrentStep].y, -1);
-        //        floppyPosition.x = MovingTilesAllCell[CurrentStep].x;
-        //        floppyPosition.y = MovingTilesAllCell[CurrentStep].y;
-        //    }
-        //}
-       
+        if(movingTileGroups.Count > 0)
+        {
+            bool inMoving = false;
+            var mtg = new MovingTileGroup();
+            for (int i = 0; i < movingTileGroups.Count; i++)
+            {
+                int tileX = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.x;
+                int tileY = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.y;
+
+                if (floppyPosition.x == tileX && floppyPosition.y == tileY)
+                {
+                    inMoving = true;
+                    mtg = movingTileGroups[i];
+                }
+            }
+            //    if (floppyPosition.x == MovingTilesAllCell[CurrentStep].x && floppyPosition.y == MovingTilesAllCell[CurrentStep].y)
+            //    {
+            //        inMoving = true;
+            //    }
+            MovingtileGroupAfterJump();
+            if (inMoving)
+            {
+                Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
+                floppyPosition.x = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.x;
+                floppyPosition.y = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.y;
+            }
+            //    if (inMoving)
+            //    {
+            //        Floppy.transform.position = new Vector3(MovingTilesAllCell[CurrentStep].x, MovingTilesAllCell[CurrentStep].y, -1);
+            //        floppyPosition.x = MovingTilesAllCell[CurrentStep].x;
+            //        floppyPosition.y = MovingTilesAllCell[CurrentStep].y;
+            //    }
+        }
+
         //if()
     }
 

@@ -9,6 +9,8 @@ public class MovingTileGroup : MonoBehaviour
     public GameObject[] arrayTile = new GameObject[5];
     public int CurrentStep = 1;
     public int UporBack = 1;
+   
+    
 
     public void SetUp()
     {

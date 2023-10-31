@@ -11,26 +11,13 @@ public class SwipeDetector : MonoBehaviour
     private readonly Vector2 mXAxis = new Vector2(1, 0);
     private readonly Vector2 mYAxis = new Vector2(0, 1);
 
-    private readonly string [] mMessage = {
-        "",
-        "Swipe Left",
-        "Swipe Right",
-        "Swipe Top",
-        "Swipe Bottom"
-    };
-
     private int mMessageIndex = 0;
 
-    // The angle range for detecting swipe
     private const float mAngleRange = 30;
 
-    // To recognize as swipe user should at lease swipe for this many pixels
     private const float mMinSwipeDist = 20.0f;
 
-    // To recognize as a swipe the velocity of the swipe
-    // should be at least mMinVelocity
-    // Reduce or increase to control the swipe speed
-    private const float mMinVelocity  = 2000.0f;
+    private const float mMinVelocity  = 1000.0f;
 
     private Vector2 mStartPosition;
     private float mSwipeStartTime;
@@ -39,100 +26,136 @@ public class SwipeDetector : MonoBehaviour
     FloppyControll floppyControll;
     public GameManager gameManager;
 
-    // Use this for initialization
     void Start ()
     {
         floppyControll = gameObject.GetComponent<FloppyControll>();
     }
-
-    // Update is called once per frame
+    bool canSwipe = false;
+    bool canRescale = false;
     void Update () {
 
-        // Mouse button down, possible chance for a swipe
-        if (Input.GetMouseButtonDown(0)) {
-            // Record start time and position
-            mStartPosition = new Vector2(Input.mousePosition.x,
-                                         Input.mousePosition.y);
-            mSwipeStartTime = Time.time;
-            floppyControll.StartJumpAnim();
-            
-        }
-
-        // Mouse button up, possible chance for a swipe
-        if (Input.GetMouseButtonUp(0))
+        if (floppyControll.canswipe)
         {
-            floppyControll.floppyOnStartReScale();
-            float deltaTime = Time.time - mSwipeStartTime;
 
-            Vector2 endPosition  = new Vector2(Input.mousePosition.x,
-                                               Input.mousePosition.y);
+            if (Input.GetMouseButtonDown(0))
+            {
+                mStartPosition = new Vector2(Input.mousePosition.x,
+                                             Input.mousePosition.y);
+                mSwipeStartTime = Time.time;
+                floppyControll.StartJumpAnim();
+                canSwipe = true;
+            }
+            Vector2 endPosition = new Vector2(Input.mousePosition.x,
+                                                   Input.mousePosition.y);
             Vector2 swipeVector = endPosition - mStartPosition;
+            if(swipeVector.magnitude > mMinSwipeDist)
+            {
+                float deltaTime = Time.time - mSwipeStartTime;
 
-            float velocity = swipeVector.magnitude/deltaTime;
+                //Vector2 endPosition = new Vector2(Input.mousePosition.x,
+                //                                   Input.mousePosition.y);
+                //Vector2 swipeVector = endPosition - mStartPosition;
 
-            if (velocity > mMinVelocity &&
-                swipeVector.magnitude > mMinSwipeDist) {
-                // if the swipe has enough velocity and enough distance
+                float velocity = swipeVector.magnitude / deltaTime;
 
-                swipeVector.Normalize();
+                if (velocity > mMinVelocity && canSwipe)
+                {
+                    canSwipe = false;
+                    swipeVector.Normalize();
 
-                float angleOfSwipe = Vector2.Dot(swipeVector, mXAxis);
-                angleOfSwipe = Mathf.Acos(angleOfSwipe) * Mathf.Rad2Deg;
-
-                // Detect left and right swipe
-                if (angleOfSwipe < mAngleRange) {
-                    OnSwipeRight();
-                } else if ((180.0f - angleOfSwipe) < mAngleRange) {
-                    OnSwipeLeft();
-                } else {
-                    // Detect top and bottom swipe
-                    angleOfSwipe = Vector2.Dot(swipeVector, mYAxis);
+                    float angleOfSwipe = Vector2.Dot(swipeVector, mXAxis);
                     angleOfSwipe = Mathf.Acos(angleOfSwipe) * Mathf.Rad2Deg;
-                    if (angleOfSwipe < mAngleRange) {
-                        OnSwipeTop();
-                    } else if ((180.0f - angleOfSwipe) < mAngleRange) {
-                        OnSwipeBottom();
-                    } else {
-                        mMessageIndex = 0;
+
+                    if (angleOfSwipe < mAngleRange)
+                    {
+                        OnSwipeRight();
+                    }
+                    else if ((180.0f - angleOfSwipe) < mAngleRange)
+                    {
+                        OnSwipeLeft();
+                    }
+                    else
+                    {
+                        angleOfSwipe = Vector2.Dot(swipeVector, mYAxis);
+                        angleOfSwipe = Mathf.Acos(angleOfSwipe) * Mathf.Rad2Deg;
+                        if (angleOfSwipe < mAngleRange)
+                        {
+                            OnSwipeTop();
+                        }
+                        else if ((180.0f - angleOfSwipe) < mAngleRange)
+                        {
+                            OnSwipeBottom();
+                        }
+                        else
+                        {
+                            mMessageIndex = 0;
+                        }
                     }
                 }
+                else
+                {
+                    canRescale = true;
+                }
+            }
+            else
+            {
+                canRescale = true;
+            }
+
+            if (Input.GetMouseButtonUp(0))
+            {
+                if (canRescale)
+                {
+                    floppyControll.floppyOnStartReScale();
+                    canRescale = false;
+                }
+               
+                //else
+                //{
+                //   
+                //    Debug.Log(111);
+                //}
             }
         }
     }
 
-    void OnGUI() {
-        // Display the appropriate message
-        GUI.Label(new Rect((Screen.width-mMessageWidth)/2,
-                           (Screen.height-mMessageHeight)/2,
-                            mMessageWidth, mMessageHeight),
-                  mMessage[mMessageIndex]);
-    }
-
     private void OnSwipeLeft() {
-        // mMessageIndex = 1;
         ShowText.text = "Left";
-        gameManager.OnSwipeLeft();
-        floppyControll.JumpAnim();
+        if (floppyControll.canswipe)
+        {
+            gameManager.OnSwipeLeft();
+            floppyControll.JumpAnim();
+        }
+
     }
 
     private void OnSwipeRight() {
-        // mMessageIndex = 2;
         ShowText.text = "Right";
-        gameManager.OnSwipeRight();
-        floppyControll.JumpAnim();
+        if (floppyControll.canswipe)
+        {
+            gameManager.OnSwipeRight();
+            floppyControll.JumpAnim();
+        }
+
     }
 
     private void OnSwipeTop() {
-        // mMessageIndex = 3;
         ShowText.text = "Top";
-        gameManager.OnSwipeTop();
-        floppyControll.JumpAnim();
+        if (floppyControll.canswipe)
+        {
+            gameManager.OnSwipeTop();
+            floppyControll.JumpAnim();
+        }
+
     }
 
     private void OnSwipeBottom() {
-        // mMessageIndex = 4;
         ShowText.text = "Botton";
-        gameManager.OnSwipeBottom();
-        floppyControll.JumpAnim();
+        if (floppyControll.canswipe)
+        {
+            gameManager.OnSwipeBottom();
+            floppyControll.JumpAnim();
+        }
+
     }
 }
