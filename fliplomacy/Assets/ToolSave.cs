@@ -1,7 +1,11 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ToolSave : MonoBehaviour
 {
@@ -17,9 +21,12 @@ public class ToolSave : MonoBehaviour
     public GameObject MovingTileSprite;
     public GameObject BombTileSprite;
     public GameObject BombMarketSprite;
+    public GameObject NonTile;
 
     public GameObject selectedPanel;
     private Camera cam;
+
+   
 
 
     void Start()
@@ -108,104 +115,200 @@ public class ToolSave : MonoBehaviour
                     selectedCellTemp = selectedCell;
                 }
             }
-            selectedPanel.gameObject.SetActive(true);
+           // selectedPanel.gameObject.SetActive(true);
         }
     }
+    int secondInWormHoleID = 1;
+    
+    public void CheckSumWormHole()
+    {
+        int NumberWormHole = -1;
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (cells[i].cellID[0] == "3"[0])
+            {
+                NumberWormHole++;
+                secondInWormHoleID = 1+ (int)NumberWormHole/2;
+            }
+        }
+        selectedCell.GetComponent<ACell>().cellID = 3.ToString()+secondInWormHoleID.ToString();
+    }
+    //string a = "1";
+    //string b = "2";
+    //var c = a + b;
+    //int d = Int32.Parse(c);
+    //Debug.Log(d);
+    //Debug.Log(c[0]);
 
     public void OnFlagCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 1;
-        if (selectedCell.transform.childCount > 1)
-        {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(Flags,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
-        else
-        {
-            Instantiate(Flags,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+        AddTileFunc(1.ToString(), Flags);
     }
     public void OnDisappearingCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 2;
-        if (selectedCell.transform.childCount > 1)
-        {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(Disappearing,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
-        else
-        {
-            Instantiate(Disappearing,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+    
+        AddTileFunc(2.ToString(), Disappearing);
     }
     public void OnWormholeCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 3;
-        if (selectedCell.transform.childCount > 1)
-        {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(Wormhole,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
-        else
-        {
-            Instantiate(Wormhole,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+        AddTileFunc(3.ToString(), Wormhole);
+        CheckSumWormHole();
     }
+
+    public TMP_Dropdown ChangingTileDirection;
+    
     public void OnFlafChangingCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 41;
-        if (selectedCell.transform.childCount > 1)
+        string id = 4.ToString() + ChangingTileDirection.value.ToString();
+        if(id[1] == '0')
         {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(FlagChaningDoc,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
+            AddTileFunc(id, FlagChaningDoc);
         }
         else
         {
-            Instantiate(FlagChaningNgang,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
+            AddTileFunc(id, FlagChaningNgang);
         }
+        
     }
+
+    public TMP_Dropdown MovingTileDirection;
+    public TMP_InputField numberOfList;
+    public TMP_InputField ShowPosition;
+    public TMP_Dropdown MovingDirectionUporBack;
+    int MovingTileID = 0;
     public void OnMovingCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 5;
-        if (selectedCell.transform.childCount > 1)
-        {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(MovingTileSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
-        else
-        {
-            Instantiate(MovingTileSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+        AddTileFunc(5.ToString(), MovingTileSprite);
+        GenerateMovingTile();
     }
+    public void GenerateMovingTile()
+    {
+        List<ACell> allMovingTile = new List<ACell>();
+        int startCell = 0;
+        int numberoflist = Int32.Parse(numberOfList.text);
+        for (int i = 0; i < cells.Count; i++)
+        {
+            if (cells[i].cellID == "5")
+            {
+                for (int j = 0; j < numberoflist; j++)
+                {
+                    for (int k = 0; k < cells.Count; k++)
+                    { 
+                        if(MovingTileDirection.value == 0)
+                        {
+                            var cx = cells[k].idX;
+                            var cy = cells[k].idY;
+                            if (cx == cells[i].idX && cy == cells[i].idY - j)
+                            {
+                                allMovingTile.Add(cells[k]);
+                            }
+                        }
+                        else
+                        {
+                            var cx = cells[k].idX;
+                            var cy = cells[k].idY;
+                            if (cx == cells[i].idX + j && cy == cells[i].idY )
+                            {
+                                allMovingTile.Add(cells[k]);
+                            }
+                        }
+                    }
+                }
+                break;
+            }
+        }
+        for (int i = 0; i < allMovingTile.Count; i++)
+        {
+            //550104
+            string id = "5" + numberOfList.text + (Int32.Parse(ShowPosition.text) - 1).ToString() + MovingDirectionUporBack.value.ToString() + MovingTileID.ToString()+i.ToString() ;
+            if (i == Int32.Parse(ShowPosition.text)-1)
+            {
+                AddTileFuncServe(id, MovingTileSprite, allMovingTile[i].gameObject);
+            }
+            else
+            {
+                AddTileFuncServe(id, NonTile, allMovingTile[i].gameObject);
+            }
+        }
+        MovingTileID++;
+        //selectedCell.GetComponent<ACell>().cellID = 3.ToString() + secondInWormHoleID.ToString();
+    }
+    public TMP_InputField BombID;
+    public TMP_Dropdown BombMarkedID;
+
+    List<string> BombIDpOption = new List<string> ();
     public void OnBombCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 6;
-        if (selectedCell.transform.childCount > 1)
-        {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(BombTileSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
-        else
-        {
-            Instantiate(BombTileSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+        var id = 6 + BombID.text;
+        AddTileFunc(id, BombTileSprite);
+
+        BombIDpOption.Add("BombID " + BombID.text);
+        var BombIDpOptiontemp = BombIDpOption.Distinct().ToList();
+        BombIDpOptiontemp.Add("1111");
+        BombMarkedID.ClearOptions();
+        BombMarkedID.AddOptions(BombIDpOptiontemp);
+
     }
     public void OnBombMarkedCilck()
     {
-        selectedCell.GetComponent<ACell>().cellID = 60;
-        if (selectedCell.transform.childCount > 1)
+        if(BombMarkedID.options.Count > 0)
         {
-            Destroy(selectedCell.transform.GetChild(1).gameObject);
-            Instantiate(BombMarketSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
+            var bid = BombMarkedID.options[BombMarkedID.value].text[7].ToString();
+            Debug.Log(bid) ;
+            var id = 7 + bid;
+            AddTileFunc(id, BombMarketSprite);
         }
-        else
-        {
-            Instantiate(BombMarketSprite,selectedCell.transform.position,quaternion.identity ).transform.SetParent(selectedCell.transform);
-        }
+        
     }
 
     public void OnNoneTileClick()
     {
+        AddTileFunc(20.ToString(), NonTile);
+    }
+    public void OnDefaultTileClick()
+    {
         
+        selectedCell.GetComponent<ACell>().cellID = "0";
+        if (selectedCell.transform.childCount > 1)
+        {
+            Destroy(selectedCell.transform.GetChild(1).gameObject);
+        }
+    }
+    public void OnSaveClick()
+    {
+
+        allCell.GetComponent<AllCellDate>().Save();
+    }
+    public void AddTileFunc(string id, GameObject sprite)
+    {
+        if(selectedCell != null)
+        {
+            selectedCell.GetComponent<ACell>().cellID = id;
+            if (selectedCell.transform.childCount > 1)
+            {
+                Destroy(selectedCell.transform.GetChild(1).gameObject);
+                Instantiate(sprite, selectedCell.transform.position, quaternion.identity).transform.SetParent(selectedCell.transform);
+            }
+            else
+            {
+                Instantiate(sprite, selectedCell.transform.position, quaternion.identity).transform.SetParent(selectedCell.transform);
+            }
+        }
+    }
+    public void AddTileFuncServe( string id, GameObject sprite , GameObject objNeedChange)
+    {
+        if (objNeedChange != null)
+        {
+            objNeedChange.GetComponent<ACell>().cellID = id;
+            if (objNeedChange.transform.childCount > 1)
+            {
+                Destroy(objNeedChange.transform.GetChild(1).gameObject);
+                Instantiate(sprite, objNeedChange.transform.position, quaternion.identity).transform.SetParent(objNeedChange.transform);
+            }
+            else
+            {
+                Instantiate(sprite, objNeedChange.transform.position, quaternion.identity).transform.SetParent(objNeedChange.transform);
+            }
+        }
     }
 }
