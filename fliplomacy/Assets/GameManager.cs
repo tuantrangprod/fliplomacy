@@ -19,6 +19,8 @@ public class GameManager : MonoBehaviour
     List<DisappearingTile> DisappearingObj = new List<DisappearingTile>();// dung cho Disappearing tile
 
     public GameObject Wormhole;
+    public List<Color> WormholeColor = new List<Color>();
+    public List<float> WormholeSpeed= new List<float>();
     List<GameObject> WormholeObj = new List<GameObject>();
 
     public GameObject FlagChaningDoc;
@@ -104,7 +106,7 @@ public class GameManager : MonoBehaviour
                 {
                     var tileWormhole = tile.AddComponent<WormholeTile>();
                     tileWormhole.WormholeSprite = Wormhole;
-                    tileWormhole.SetUP();
+                   // tileWormhole.SetUP();
                     WormholeObj.Add(_allCells[i, j].ob);
                     WormholeAllCell.Add(_allCells[i, j]);
                 }
@@ -180,8 +182,25 @@ public class GameManager : MonoBehaviour
                     var Wormhole2 = WormholeAllCell[j];
                     if (Wormhole1.typeTile[1] == Wormhole2.typeTile[1])
                     {
-                        Wormhole1.ob.GetComponent<WormholeTile>().ConnetedObject = Wormhole2.ob;
-                        Wormhole2.ob.GetComponent<WormholeTile>().ConnetedObject = Wormhole1.ob;
+                        var w1tile = Wormhole1.ob.GetComponent<WormholeTile>();
+                        w1tile.ConnetedObject = Wormhole2.ob;
+                        w1tile.mainHole = true;
+                        var _color = WormholeColor[UnityEngine.Random.Range(0, WormholeColor.Count)];
+                        w1tile.color = _color;
+                        WormholeColor.Remove(_color);
+                        var whSpeed = UnityEngine.Random.Range(0, WormholeSpeed.Count);
+                        w1tile.rotateSpeed = WormholeSpeed[whSpeed];
+                        WormholeSpeed.Remove(WormholeSpeed[whSpeed]);
+
+
+                        var w2tile = Wormhole2.ob.GetComponent<WormholeTile>();
+                        w2tile.ConnetedObject = Wormhole1.ob;
+                        w2tile.mainHole = false;
+
+
+                        w2tile.SetUP();
+                        w1tile.SetUP();
+                        
                     }
                 }
             }
@@ -237,6 +256,10 @@ public class GameManager : MonoBehaviour
 
                                          select (MovingTileGroup)element).ToList();
         movingTileGroups = new List<MovingTileGroup>(listOut);
+        if(movingTileGroups.Count > 0)
+        {
+            Floppy.GetComponent<FloppyControll>().haveMovingTile = true;
+        }
 
         if (allBombMarked.Count != 0)
         {
@@ -266,21 +289,28 @@ public class GameManager : MonoBehaviour
             {
                 if (movingTileGroups[i].arrayTile[j] != null)
                 {
+                    //movingTileGroups[i].MovingTileTravel();
+                    StartCoroutine(WaitFloppyEndJump(movingTileGroups[i]));
                     int x = (int)movingTileGroups[i].arrayTile[j].transform.position.x;
                     int y = (int)movingTileGroups[i].arrayTile[j].transform.position.y;
                     if (j != movingTileGroups[i].CurrentStep)
                     {
                         _allCells[x, y].typeTile = 20.ToString();
-                        movingTileGroups[i].arrayTile[j].gameObject.SetActive(false);
+                        //movingTileGroups[i].arrayTile[j].gameObject.SetActive(false);
                     }
                     else
                     {
                         _allCells[x, y].typeTile = 5.ToString();
-                        movingTileGroups[i].arrayTile[j].gameObject.SetActive(true);
+                        //movingTileGroups[i].arrayTile[j].gameObject.SetActive(true);
                     }
                 }
             }
         }
+    }
+    public IEnumerator WaitFloppyEndJump(MovingTileGroup mvt)
+    {
+        yield return new WaitForSeconds(0.2f);
+        mvt.MovingTileTravel();
     }
     public void MovingtileGroupAfterJump()
     {
@@ -318,35 +348,6 @@ public class GameManager : MonoBehaviour
 
         }
         MovingtileGroup();
-        //if (!goBack)
-        //{
-
-        //    if (CurrentStep >= MovingTilesAllCell.Count - 1)
-        //    {
-        //        goBack = true;
-        //        CurrentStep--;
-        //    }
-        //    else
-        //    {
-        //        CurrentStep++;
-        //    }
-
-        //}
-        //else
-        //{
-        //    if (CurrentStep <=  0)
-        //    {
-        //        goBack = false;
-        //        CurrentStep++;
-        //    }
-        //    else
-        //    {
-        //        CurrentStep--;
-        //    }
-        //}
-        //if(floppyPosition.x == )
-
-
 
     }
     void Update()
@@ -368,27 +369,32 @@ public class GameManager : MonoBehaviour
             OnSwipeBottom();
         }
     }
+    [HideInInspector] public string swipeDirection;
     public void OnSwipeLeft() {
-        Debug.Log("Left");
+        // Debug.Log("Left");
+        swipeDirection = "Left";
         FloppyMove(-1,0);
         //ShowText.text = "Left";
     }
 
     public void OnSwipeRight() {
-        Debug.Log("Right");
+        //Debug.Log("Right");
+        swipeDirection = "Right";
         FloppyMove(1, 0);
         //ShowText.text = "Right";
 
     }
 
     public void OnSwipeTop() {
-        Debug.Log("Top");
+        //Debug.Log("Top");
+        swipeDirection = "Top";
         FloppyMove(0,1);
         //ShowText.text = "Top";
     }
 
     public void OnSwipeBottom() {
-        Debug.Log("Down");
+        //Debug.Log("Down");
+        swipeDirection = "Down";
         FloppyMove(0,-1);
         //ShowText.text = "Botton";
     }
@@ -445,7 +451,7 @@ public class GameManager : MonoBehaviour
                 if(FlagsAllCell[i].x == _allCells[nextX, nextY].x)
                 {
                     //Debug.Log(FlagsAllCell);
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
                 }
             }
         }
@@ -457,7 +463,7 @@ public class GameManager : MonoBehaviour
             {
                 if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
                 {
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag();
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Left");
                 }
             }
            }
@@ -498,7 +504,7 @@ public class GameManager : MonoBehaviour
                 for(int i = 0; i < flagsInStep.Count; i++)
                 {
                     var flagFunc = flagsInStep[i].GetComponent<FlagTile>();
-                    flagFunc.ChangeFlag();
+                    flagFunc.ChangeFlag(swipeDirection);
 
                 }
                 //endstep
@@ -543,7 +549,10 @@ public class GameManager : MonoBehaviour
         if(_allCells[nextX, nextY].typeTile[0] == '3')
         {
             var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
+            
             Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
+            Floppy.GetComponent<FloppyControll>().TeleAnim(floppyPosition.x, floppyPosition.y);
+            Floppy.GetComponent<FloppyControll>().FloppyInWormHole = true;
             floppyPosition.x = (int)conneted.x;
             floppyPosition.y = (int)conneted.y;
         }
@@ -559,29 +568,24 @@ public class GameManager : MonoBehaviour
                 if (floppyPosition.x == tileX && floppyPosition.y == tileY)
                 {
                     inMoving = true;
+                    Floppy.GetComponent<FloppyControll>().InMovingTile = true;
                     mtg = movingTileGroups[i];
+                    Floppy.GetComponent<FloppyControll>().movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
                 }
             }
-            //    if (floppyPosition.x == MovingTilesAllCell[CurrentStep].x && floppyPosition.y == MovingTilesAllCell[CurrentStep].y)
-            //    {
-            //        inMoving = true;
-            //    }
             MovingtileGroupAfterJump();
             if (inMoving)
             {
+                
                 Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
+
+                
+                
+
                 floppyPosition.x = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.x;
                 floppyPosition.y = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.y;
             }
-            //    if (inMoving)
-            //    {
-            //        Floppy.transform.position = new Vector3(MovingTilesAllCell[CurrentStep].x, MovingTilesAllCell[CurrentStep].y, -1);
-            //        floppyPosition.x = MovingTilesAllCell[CurrentStep].x;
-            //        floppyPosition.y = MovingTilesAllCell[CurrentStep].y;
-            //    }
         }
-
-        //if()
     }
 
     public void HideDisappearingTileAfterJumpOut()

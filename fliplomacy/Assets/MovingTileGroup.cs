@@ -9,8 +9,9 @@ public class MovingTileGroup : MonoBehaviour
     public GameObject[] arrayTile = new GameObject[5];
     public int CurrentStep = 1;
     public int UporBack = 1;
-   
-    
+
+
+    GameObject movingTile;
 
     public void SetUp()
     {
@@ -18,12 +19,19 @@ public class MovingTileGroup : MonoBehaviour
         {
             if(arrayTile[i] != null)
             {
-                Instantiate(MovingTileSprite, arrayTile[i].transform.position, Quaternion.identity).transform.SetParent(arrayTile[i].transform);
-                if(i != CurrentStep)
+                //Instantiate(MovingTileSprite, arrayTile[i].transform.position, Quaternion.identity).transform.SetParent(arrayTile[i].transform);
+                arrayTile[i].gameObject.SetActive(false);
+                if (i == CurrentStep)
                 {
-                    arrayTile[i].gameObject.SetActive(false);
+                    movingTile = Instantiate(MovingTileSprite, arrayTile[i].transform.position, Quaternion.identity);
                 }
             }
         }
+    }
+    public void MovingTileTravel()
+    {
+        StartCoroutine(0.2f.Tweeng((p) => movingTile.transform.position = p,
+          movingTile.transform.position,
+           arrayTile[CurrentStep].transform.position));
     }
 }

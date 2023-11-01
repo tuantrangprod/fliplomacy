@@ -21,9 +21,11 @@ namespace DigitalRuby.Tween
     public class TweenDemo : MonoBehaviour
     {
         public GameObject Circle;
+        public GameObject Circle1;
         public Light Light;
 
-        private SpriteRenderer spriteRenderer;
+        public SpriteRenderer spriteRenderer;
+        public SpriteRenderer spriteRenderer1;
 
         private void TweenMove()
         {
@@ -60,6 +62,18 @@ namespace DigitalRuby.Tween
 
             // completion defaults to null if not passed in
             Circle.gameObject.Tween("ColorCircle", spriteRenderer.color, endColor, 0.1f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
+        }
+        private void TweenColor1()
+        {
+            System.Action<ITween<Color>> updateColor = (t) =>
+            {
+                spriteRenderer1.color = t.CurrentValue;
+            };
+
+            Color endColor = UnityEngine.Random.ColorHSV(0.0f, 1.0f, 0.0f, 1.0f, 0.5f, 1.0f, 1.0f, 1.0f);
+
+            // completion defaults to null if not passed in
+            Circle1.gameObject.Tween("ColorCircle", spriteRenderer1.color, endColor, 0.1f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
         }
 
         private void TweenRotate()
@@ -99,6 +113,7 @@ namespace DigitalRuby.Tween
             if (Input.GetKeyDown(KeyCode.Alpha2))
             {
                 TweenColor();
+                TweenColor1();
             }
             if (Input.GetKeyDown(KeyCode.Alpha3))
             {

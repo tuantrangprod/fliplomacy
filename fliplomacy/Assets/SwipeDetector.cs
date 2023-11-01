@@ -121,6 +121,7 @@ public class SwipeDetector : MonoBehaviour
 
     private void OnSwipeLeft() {
         ShowText.text = "Left";
+        Debug.Log("Left");
         if (floppyControll.canswipe)
         {
             gameManager.OnSwipeLeft();
@@ -131,6 +132,7 @@ public class SwipeDetector : MonoBehaviour
 
     private void OnSwipeRight() {
         ShowText.text = "Right";
+        Debug.Log("Right");
         if (floppyControll.canswipe)
         {
             gameManager.OnSwipeRight();
@@ -141,6 +143,7 @@ public class SwipeDetector : MonoBehaviour
 
     private void OnSwipeTop() {
         ShowText.text = "Top";
+        Debug.Log("Top");
         if (floppyControll.canswipe)
         {
             gameManager.OnSwipeTop();
@@ -151,6 +154,7 @@ public class SwipeDetector : MonoBehaviour
 
     private void OnSwipeBottom() {
         ShowText.text = "Botton";
+        Debug.Log("Down");
         if (floppyControll.canswipe)
         {
             gameManager.OnSwipeBottom();

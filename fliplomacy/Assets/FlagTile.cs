@@ -17,7 +17,7 @@ public class FlagTile : MonoBehaviour
         //     .color = _color;
 
     }
-    public void ChangeFlag()
+    public void ChangeFlag(string swipeDirection)
     {
         //var flag = gameObject.transform.GetChild(1);
         //if (flagStatus == 0)
@@ -32,10 +32,21 @@ public class FlagTile : MonoBehaviour
         //    flag.gameObject.transform.GetChild(0).gameObject.SetActive(true);
         //    flag.gameObject.transform.GetChild(1).gameObject.SetActive(false);
         //}
-        // var flag = gameObject.transform.GetChild(1);
-        // StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.GetChild(0).gameObject.transform.localEulerAngles = p,
-        //     flag.gameObject.transform.GetChild(0).gameObject.transform.localEulerAngles,
-        //     flag.gameObject.transform.GetChild(0).gameObject.transform.localEulerAngles + new Vector3(0, 180, 0)));
+        var flag = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2);
+        if (swipeDirection == "Left" || swipeDirection == "Right")
+        {
+            StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
+           flag.gameObject.transform.localEulerAngles,
+           flag.gameObject.transform.localEulerAngles + new Vector3(0, 180, 0)));
+        }
+        else
+        {
+            StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
+           flag.gameObject.transform.localEulerAngles,
+           flag.gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
+        }
+
+
         SetColor();
         TweenColor();
 
@@ -59,13 +70,18 @@ public class FlagTile : MonoBehaviour
     }
     private void TweenColor()
     {
+        //var flagsprite = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject;
+        //var spriteRenderer = flagsprite.GetComponent<SpriteRenderer>();
+        //spriteRenderer.color = _color;
+
         var flagsprite = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject;
         var spriteRenderer = flagsprite.GetComponent<SpriteRenderer>();
         System.Action<ITween<Color>> updateColor = (t) =>
         {
             spriteRenderer.color = t.CurrentValue;
         };
-        flagsprite.gameObject.Tween("ColorCircle", spriteRenderer.color, 
+        var key = Random.Range(0, 1000000);
+        flagsprite.gameObject.Tween(key.ToString(), spriteRenderer.color,
             _color, 0.1f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
     }
 }
