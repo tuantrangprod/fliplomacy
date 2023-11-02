@@ -11,6 +11,7 @@ public class GameManager : MonoBehaviour
     public GameObject aCell;
     public Transform allCell;
     public GameObject Floppy;
+    FloppyControll floppyControll;
 
     public GameObject Flags;
     //List<GameObject> FlagsObj = new List<GameObject>();
@@ -71,6 +72,7 @@ public class GameManager : MonoBehaviour
     public GameObject LevelSave;
     void Start()
     {
+        floppyControll = Floppy.GetComponent<FloppyControll>();
         _allCells = new AllCell[5, 5];
         var cellsdata = LevelSave.GetComponent<AllCellDate>().cellsData;
         for (int i = 0; i < cellsdata.Count; i++)
@@ -258,7 +260,7 @@ public class GameManager : MonoBehaviour
         movingTileGroups = new List<MovingTileGroup>(listOut);
         if(movingTileGroups.Count > 0)
         {
-            Floppy.GetComponent<FloppyControll>().haveMovingTile = true;
+            floppyControll.haveMovingTile = true;
         }
 
         if (allBombMarked.Count != 0)
@@ -371,32 +373,23 @@ public class GameManager : MonoBehaviour
     }
     [HideInInspector] public string swipeDirection;
     public void OnSwipeLeft() {
-        // Debug.Log("Left");
         swipeDirection = "Left";
         FloppyMove(-1,0);
-        //ShowText.text = "Left";
     }
 
     public void OnSwipeRight() {
-        //Debug.Log("Right");
         swipeDirection = "Right";
         FloppyMove(1, 0);
-        //ShowText.text = "Right";
-
     }
 
     public void OnSwipeTop() {
-        //Debug.Log("Top");
         swipeDirection = "Top";
         FloppyMove(0,1);
-        //ShowText.text = "Top";
     }
 
     public void OnSwipeBottom() {
-        //Debug.Log("Down");
         swipeDirection = "Down";
         FloppyMove(0,-1);
-        //ShowText.text = "Botton";
     }
 
     private void FloppyMove(int x, int y)
@@ -551,8 +544,12 @@ public class GameManager : MonoBehaviour
             var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
             
             Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
-            Floppy.GetComponent<FloppyControll>().TeleAnim(floppyPosition.x, floppyPosition.y);
-            Floppy.GetComponent<FloppyControll>().FloppyInWormHole = true;
+            floppyControll.wormholeStartPosX = floppyPosition.x;
+            floppyControll.wormholeStartPosY = floppyPosition.y;
+            floppyControll.floppyInWormHole = true;
+
+            //floppyControll.TeleAnim(floppyPosition.x, floppyPosition.y);
+
             floppyPosition.x = (int)conneted.x;
             floppyPosition.y = (int)conneted.y;
         }
@@ -568,24 +565,20 @@ public class GameManager : MonoBehaviour
                 if (floppyPosition.x == tileX && floppyPosition.y == tileY)
                 {
                     inMoving = true;
-                    Floppy.GetComponent<FloppyControll>().InMovingTile = true;
+                    floppyControll.inMovingTile = true;
                     mtg = movingTileGroups[i];
-                    Floppy.GetComponent<FloppyControll>().movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
+                    floppyControll.movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
                 }
             }
             MovingtileGroupAfterJump();
             if (inMoving)
-            {
-                
+            {          
                 Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
-
-                
-                
-
                 floppyPosition.x = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.x;
                 floppyPosition.y = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.y;
             }
         }
+        floppyControll.JumpAnim();
     }
 
     public void HideDisappearingTileAfterJumpOut()

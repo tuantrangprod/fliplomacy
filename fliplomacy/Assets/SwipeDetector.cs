@@ -34,7 +34,7 @@ public class SwipeDetector : MonoBehaviour
     bool canRescale = false;
     void Update () {
 
-        if (floppyControll.canswipe)
+        if (floppyControll.canswipe && !floppyControll.floppyInWormHole)
         {
 
             if (Input.GetMouseButtonDown(0))
@@ -104,62 +104,34 @@ public class SwipeDetector : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                if (canRescale)
+                if (canRescale && !floppyControll.floppyInWormHole)
                 {
-                    floppyControll.floppyOnStartReScale();
+                    floppyControll.FloppyReScale();
                     canRescale = false;
                 }
-               
-                //else
-                //{
-                //   
-                //    Debug.Log(111);
-                //}
+             
             }
         }
     }
 
     private void OnSwipeLeft() {
-        ShowText.text = "Left";
-        Debug.Log("Left");
-        if (floppyControll.canswipe)
-        {
-            gameManager.OnSwipeLeft();
-            floppyControll.JumpAnim();
-        }
+        gameManager.OnSwipeLeft();
+        //floppyControll.JumpAnim();
 
     }
 
     private void OnSwipeRight() {
-        ShowText.text = "Right";
-        Debug.Log("Right");
-        if (floppyControll.canswipe)
-        {
-            gameManager.OnSwipeRight();
-            floppyControll.JumpAnim();
-        }
-
+        gameManager.OnSwipeRight();
+        //floppyControll.JumpAnim();
     }
 
     private void OnSwipeTop() {
-        ShowText.text = "Top";
-        Debug.Log("Top");
-        if (floppyControll.canswipe)
-        {
-            gameManager.OnSwipeTop();
-            floppyControll.JumpAnim();
-        }
-
+        gameManager.OnSwipeTop();
+        //floppyControll.JumpAnim();
     }
 
     private void OnSwipeBottom() {
-        ShowText.text = "Botton";
-        Debug.Log("Down");
-        if (floppyControll.canswipe)
-        {
-            gameManager.OnSwipeBottom();
-            floppyControll.JumpAnim();
-        }
-
+        gameManager.OnSwipeBottom();
+       // floppyControll.JumpAnim();
     }
 }

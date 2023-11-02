@@ -7,138 +7,136 @@ using UnityEngine;
 public class FloppyControll : MonoBehaviour
 {
     public float timeInAAnimLoop = 1f;
-    private GameObject FloopySprite;
+    private GameObject floopySprite;
     //private GameObject floppyOnStart;
-    private GameObject floppyOnJump;
+    //private GameObject floppyOnJump;
     private void Start()
     {
         
-        FloopySprite = gameObject.transform.GetChild(0).gameObject;
+        var Sprite = gameObject.transform.GetChild(0).gameObject;
+        floopySprite = Instantiate(Sprite,  new Vector3(0,0,-2), quaternion.identity);
+        floopySprite.gameObject.SetActive(true);
+
         StartIdelAnim();
-        floppyOnJump = Instantiate(FloopySprite,  new Vector3(0,0,-2), quaternion.identity);
-        floppyOnJump.gameObject.SetActive(false);
 
     }
+    Coroutine floppyMove;
+    Coroutine floppyScale;
     public IEnumerator RePlayFloppyIdelAnim()
     {
+        StartCoroutine(FloppyIdelAnim());
         while (true)
         {
             yield return new WaitForSeconds(timeInAAnimLoop * 2);
             StartCoroutine(FloppyIdelAnim());
         }
-        
     }
+    
 
     public IEnumerator FloppyIdelAnim()
     {
-        StartCoroutine(timeInAAnimLoop.Tweeng((p) => FloopySprite.transform.localScale = p,
-            FloopySprite.transform.localScale,
-            new Vector3(0.4f, 0.3f, 0.4f)));
+        FloopySpriteScale(timeInAAnimLoop, new Vector3(0.3f, 0.3f, 0.3f));
+
         yield return new WaitForSeconds(timeInAAnimLoop);
-        StartCoroutine(timeInAAnimLoop.Tweeng((p) => FloopySprite.transform.localScale = p,
-            FloopySprite.transform.localScale,
-            new Vector3(0.5f, 0.5f, 0.5f)));
+
+        FloopySpriteScale(timeInAAnimLoop, new Vector3(0.5f, 0.5f, 0.5f));
+    }
+    public void StartIdelAnim()
+    {
+        StartCoroutine(RePlayFloppyIdelAnim());
+    }
+    public void StopIdelAnim()
+    {
+        StopCoroutine(RePlayFloppyIdelAnim());
+
     }
     public bool canswipe = true;
     public void StartJumpAnim()
     {
-        floppyOnJump.gameObject.SetActive(true);
-        floppyOnJump.transform.position = FloopySprite.transform.position;
-        floppyOnJump.transform.localScale = FloopySprite.transform.localScale;
+        floopySprite.transform.position = gameObject.transform.position -  new Vector3(0,0,2);
 
-        StartCoroutine(0.1f.Tweeng((p) => floppyOnJump.transform.localScale = p,
-            FloopySprite.transform.localScale,
-            new Vector3(0.2f, 0.2f, 0.2f)));
-
-        FloopySprite.gameObject.SetActive(false);
         StopIdelAnim();
 
-        //StopIdelAnim();
+        FloopySpriteScale(0.1f, new Vector3(0.2f, 0.2f, 0.2f));
     }
 
-    public void floppyOnStartReScale()
+    public void FloppyReScale()
     {
-        StartCoroutine(EndfloppyOnStartAnim());
+        StartCoroutine(EndStartJumpAnim());
     }
 
-    IEnumerator EndfloppyOnStartAnim()
+    IEnumerator EndStartJumpAnim()
     {
-        StartCoroutine(0.1f.Tweeng((p) => floppyOnJump.transform.localScale = p,
-            floppyOnJump.transform.localScale,
-            new Vector3(0.5f, 0.5f, 0.5f)));
+        FloopySpriteScale(0.1f, new Vector3(0.5f, 0.5f, 0.5f));
 
         yield return new WaitForSeconds(0.1f);
-
-        FloopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        FloopySprite.gameObject.SetActive(true);
-
         StartIdelAnim();
 
-        floppyOnJump.gameObject.SetActive(false);
 
-       
+
     }
-    public bool FloppyInWormHole = false;
-    public bool InMovingTile = false;
+    public bool floppyInWormHole = false;
+    public bool inMovingTile = false;
     public Vector3 movingTilePos = new Vector3();
+    public float wormholeStartPosX;
+    public float wormholeStartPosY;
     public void JumpAnim()
     {
         canswipe = false;
 
-        StartCoroutine(0.2f.Tweeng((p) => floppyOnJump.transform.localScale = p,
-            floppyOnJump.transform.localScale,
-            new Vector3(0.5f, 0.5f, 0.5f)));
+        FloopySpriteScale(0.2f, new Vector3(0.5f, 0.5f, 0.5f));
 
-        if(!FloppyInWormHole)
+        if (!floppyInWormHole)
         {
-            if (!InMovingTile) 
-            { 
-                FloppyJumpEndPos(gameObject.transform.position); 
+            if (!inMovingTile) 
+            {
+                FloopySpriteMove(gameObject.transform.position); 
             }
             else
             {
-                FloppyJumpEndPos(movingTilePos);
+                FloopySpriteMove(movingTilePos);
             }
 
-            StartCoroutine(floppySpriteReScale(0.2f));
+            StartCoroutine(FloppySpriteEndJumpAnim(0.2f));
+        }
+        else
+        {
+            FloopySpriteMove(new Vector3(wormholeStartPosX, wormholeStartPosX, floopySprite.transform.position.z));
+            StartCoroutine(TeleportThroughWormholes());
         }
 
-    }
-    
-    public void TeleAnim(float floppyOnJumpX, float floppyOnJumpY)
-    {
-        FloppyJumpEndPos(new Vector3(floppyOnJumpX, floppyOnJumpY, gameObject.transform.position.z));
-
-        StartCoroutine(TeleportThroughWormholes());
-    }
-    
+    }  
     public IEnumerator TeleportThroughWormholes()
     {
         yield return new WaitForSeconds(0.2f);
-        FloopySprite.transform.localScale = new Vector3(0, 0, 0);
-        FloopySprite.gameObject.SetActive(true);
 
-        StartCoroutine(0.5f.Tweeng((p) => FloopySprite.transform.localScale = p,
-            FloopySprite.transform.localScale,
+        var floopySpriteWormHoleClone = Instantiate(floopySprite, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, -2), quaternion.identity);
+
+        StartCoroutine(0.5f.Tweeng((p) => floopySpriteWormHoleClone.transform.localScale = p,
+            floopySpriteWormHoleClone.transform.localScale,
             new Vector3(0.5f, 0.5f, 0.5f)));
 
-        StartCoroutine(0.5f.Tweeng((p) => floppyOnJump.transform.localScale = p,
-            floppyOnJump.transform.localScale,
-            new Vector3(0, 0, 0)));
-
-        StartCoroutine(floppySpriteReScale(0.5f));
+        FloopySpriteScale(0.5f, new Vector3(0f, 0f, 0f));
+        StartCoroutine(EndTeleport(floopySpriteWormHoleClone));
+    }
+    IEnumerator EndTeleport(GameObject clone)
+    {
+        yield return new WaitForSeconds(0.5f);
+        floppyInWormHole = false;
+        floopySprite.transform.position = gameObject.transform.position - new Vector3(0, 0, 2);
+        floopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        Destroy(clone);
+        StartIdelAnim();
     }
 
     public bool haveMovingTile = false;
 
-    IEnumerator floppySpriteReScale(float time)
+    IEnumerator FloppySpriteEndJumpAnim(float time)
     {
         yield return new WaitForSeconds(time);
-
-        if (!InMovingTile)
+        StartIdelAnim();
+        if (!inMovingTile)
         {
-            FloppyReSacle();
-
             if (!haveMovingTile)
             {
                 canswipe = true;
@@ -148,11 +146,10 @@ public class FloppyControll : MonoBehaviour
                 StartCoroutine(WaitMovingTile());
             }
 
-            FloppyInWormHole = false;
         }
         else
         {
-            FloppyJumpEndPos(gameObject.transform.position);
+            FloopySpriteMove(gameObject.transform.position);
             StartCoroutine(WaitMovingTileEnd());
             if (!haveMovingTile)
             {
@@ -173,34 +170,29 @@ public class FloppyControll : MonoBehaviour
     public IEnumerator WaitMovingTileEnd()
     {
         yield return new WaitForSeconds(0.2f);
-        FloppyReSacle();
-        InMovingTile = false;
-    }
-    public void FloppyReSacle()
-    {
-        FloopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        FloopySprite.gameObject.SetActive(true);
         StartIdelAnim();
-
-        floppyOnJump.gameObject.SetActive(false);
+        inMovingTile = false;
     }
-    void FloppyJumpEndPos(Vector3 pos)
+    void FloopySpriteMove(Vector3 pos)
     {
-        StartCoroutine(0.2f.Tweeng((p) => floppyOnJump.transform.position = p,
-         floppyOnJump.transform.position,
+        if (floppyMove != null)
+        {
+            StopCoroutine(floppyMove);
+        }
+        floppyMove = StartCoroutine(0.2f.Tweeng((p) => floopySprite.transform.position = p,
+         floopySprite.transform.position,
          pos));
     }
-    public void StopIdelAnim()
+    void FloopySpriteScale(float time, Vector3 scale)
     {
-        StopCoroutine(FloppyIdelAnim());
-        StopCoroutine(RePlayFloppyIdelAnim());
+        if (floppyScale != null)
+        {
+            StopCoroutine(floppyScale);
+        }
+        floppyScale = StartCoroutine(time.Tweeng((p) => floopySprite.transform.localScale = p,
+             floopySprite.transform.localScale,
+             scale));
     }
-    public void StartIdelAnim()
-    {
-        StopCoroutine(FloppyIdelAnim());
-        StopCoroutine(RePlayFloppyIdelAnim());
 
-        StartCoroutine(FloppyIdelAnim());
-        StartCoroutine(RePlayFloppyIdelAnim());
-    }
+
 }
