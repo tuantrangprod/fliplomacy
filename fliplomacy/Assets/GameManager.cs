@@ -432,7 +432,7 @@ public class GameManager : MonoBehaviour
             var connetedBombMarked = _allCells[nextX, nextY].ob.GetComponent<BombTile>().ConnetedBombMarked;
             for(int i = 0; i< connetedBombMarked.Count; i++)
             {
-                connetedBombMarked[i].gameObject.SetActive(false);
+                    connetedBombMarked[i].GetComponent<BombMarkedTile>().Hiding();
                 int mx = (int) connetedBombMarked[i].transform.position.x ;
                 int my = (int)connetedBombMarked[i].transform.position.y;
                 _allCells[mx, my].typeTile = 20.ToString();
