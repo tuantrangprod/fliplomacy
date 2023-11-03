@@ -19,19 +19,6 @@ public class FlagTile : MonoBehaviour
     }
     public void ChangeFlag(string swipeDirection)
     {
-        //var flag = gameObject.transform.GetChild(1);
-        //if (flagStatus == 0)
-        //{
-        //    flagStatus = 1;
-        //    flag.gameObject.transform.GetChild(0).gameObject.SetActive(false);
-        //    flag.gameObject.transform.GetChild(1).gameObject.SetActive(true);
-        //}
-        //else
-        //{
-        //    flagStatus = 0;
-        //    flag.gameObject.transform.GetChild(0).gameObject.SetActive(true);
-        //    flag.gameObject.transform.GetChild(1).gameObject.SetActive(false);
-        //}
         var flag = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2);
         if (swipeDirection == "Left" || swipeDirection == "Right")
         {

@@ -29,7 +29,6 @@ public class FloppyControll : MonoBehaviour
         {
             yield return new WaitForSeconds(timeInAAnimLoop * 2);
             StartCoroutine("FloppyIdelAnim");
-            Debug.Log("Scale");
         }
     }
     

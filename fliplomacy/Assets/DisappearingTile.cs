@@ -19,11 +19,42 @@ public class DisappearingTile : MonoBehaviour
         //StartCoroutine(0.3f.Tweeng((p) => DisappearingSprite.transform.localScale = p,
         //  DisappearingSprite.gameObject.transform.localScale,
         //   new Vector3(0, 0, 0)));
+        StopCoroutine("RePlayDisappearingOnTrigerIdelAnim");
+        StopCoroutine("DisappearingOnTrigerIdelAnim");
+
         StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
           gameObject.gameObject.transform.localEulerAngles,
-          gameObject.gameObject.transform.localEulerAngles + new Vector3(0, 0 , 360)));
+          gameObject.gameObject.transform.localEulerAngles + new Vector3(0, 0, 360)));
         StartCoroutine(0.6f.Tweeng((p) => gameObject.transform.localScale = p,
           gameObject.gameObject.transform.localScale,
            new Vector3(0, 0, 0)));
+    }
+    public void HaveObjectOn()
+    {
+        StartCoroutine("RePlayDisappearingOnTrigerIdelAnim");
+        Debug.Log("DisappearingOnTriger");
+    }
+    public IEnumerator RePlayDisappearingOnTrigerIdelAnim()
+    {
+        StartCoroutine("DisappearingOnTrigerIdelAnim");
+        while (true)
+        {
+            yield return new WaitForSeconds(0.6f * 2);
+            StartCoroutine("DisappearingOnTrigerIdelAnim");
+        }
+    }
+
+
+    public IEnumerator DisappearingOnTrigerIdelAnim()
+    {
+        StartCoroutine(0.6f.Tweeng((p) => gameObject.transform.localScale = p,
+         gameObject.transform.localScale,
+         new Vector3(0.85f, 0.85f, 0.85f)));
+
+        yield return new WaitForSeconds(0.5f);
+
+        StartCoroutine(0.6f.Tweeng((p) => gameObject.transform.localScale = p,
+        gameObject.transform.localScale,
+        new Vector3(1f, 1f, 1f)));
     }
 }

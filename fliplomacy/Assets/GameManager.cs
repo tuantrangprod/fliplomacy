@@ -277,7 +277,7 @@ public class GameManager : MonoBehaviour
                     }
                 }
             }
-            allBombTile[0].GetComponent<BombTile>().ConnetedBombMarked = allBombMarketTile;
+           // allBombTile[0].GetComponent<BombTile>().ConnetedBombMarked = allBombMarketTile;
         }
     }
     public void MovingtileGroup()
@@ -394,74 +394,46 @@ public class GameManager : MonoBehaviour
 
     private void FloppyMove(int x, int y)
     {
-        
+
         var nextX = floppyPosition.x + x;
         var nextY = floppyPosition.y + y;
         List<GameObject> flagsInStep = new List<GameObject>();// dung cho flag tile
 
         if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)// && _allCells[nextX, nextY].typeTile != 20)
         {
-            if(_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
+            if (_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
             {
-               FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.x);
+                FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.x);
 
             }
-        else if (_allCells[nextX, nextY].typeTile == 2.ToString()) //Disappearing
+            else if (_allCells[nextX, nextY].typeTile == 2.ToString()) //Disappearing
             {
-            FloppyJump(nextX, nextY);
-            _allCells[nextX, nextY].typeTile = 20.ToString();
-            var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
-            DisappearingObj.Add(disappearingTileFunc);
-        }
-        else if (_allCells[nextX, nextY].typeTile == 20.ToString())
-        {
-            //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
-            // cai nay dung trong truong hop muon nhay qua o da bi an
-            // con khong thi khong lam gi ca
-        }
-        else if (_allCells[nextX, nextY].typeTile[0] == '6') // BombTile
-        {
-            FloppyJump(nextX, nextY);
-            var connetedBombMarked = _allCells[nextX, nextY].ob.GetComponent<BombTile>().ConnetedBombMarked;
-            for(int i = 0; i< connetedBombMarked.Count; i++)
+                DisappearingCheckOnIt(nextX, nextY);
+            }
+            else if (_allCells[nextX, nextY].typeTile == 20.ToString())
             {
-                    connetedBombMarked[i].GetComponent<BombMarkedTile>().Hiding();
-                int mx = (int) connetedBombMarked[i].transform.position.x ;
-                int my = (int)connetedBombMarked[i].transform.position.y;
-                _allCells[mx, my].typeTile = 20.ToString();
-        
+                //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
+                // cai nay dung trong truong hop muon nhay qua o da bi an
+                // con khong thi khong lam gi ca
+            }
+            else if (_allCells[nextX, nextY].typeTile[0] == '6') // BombTile
+            {
+                BombTileCheckOnIt(nextX, nextY);
+            }
+            else if (_allCells[nextX, nextY].typeTile == 40.ToString()) // Change flag theo chieu doc
+            {
+                FlagChangeTileCheckOnIt(nextX, nextY, "Top");
+            }
+            else if (_allCells[nextX, nextY].typeTile == 41.ToString()) // Change flag theo chieu ngang
+            {
+                FlagChangeTileCheckOnIt(nextX, nextY, "Left");
+
+            }
+            else
+            {
+                FloppyJump(nextX, nextY);
             }
         }
-        else if (_allCells[nextX, nextY].typeTile == 40.ToString()) // Change flag theo chieu doc
-            {
-            FloppyJump(nextX, nextY);
-                
-            for (int i = 0; i< FlagsAllCell.Count; i++)
-            {
-                if(FlagsAllCell[i].x == _allCells[nextX, nextY].x)
-                {
-                    //Debug.Log(FlagsAllCell);
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
-                }
-            }
-        }
-        else if (_allCells[nextX, nextY].typeTile == 41.ToString())
-        {
-            FloppyJump(nextX, nextY);
-            //Debug.Log(_allCells[nextX, nextY].x +"   "+ _allCells[nextX, nextY].y); // Change flag theo chieu ngang
-            for (int i = 0; i < FlagsAllCell.Count; i++)
-            {
-                if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
-                {
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Left");
-                }
-            }
-           }
-        else
-        {
-            FloppyJump(nextX, nextY);
-        }
-        } 
 
     }
     public void FloppyJump(int nextX, int nextY)
@@ -520,32 +492,43 @@ public class GameManager : MonoBehaviour
             flagsInStep.Add(_allCells[nextX, nextY].ob);
             nextX += x;
             nextY += y;
-            if(_allCells[nextX, nextY].typeTile == 1.ToString())
+            if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
             {
-                FlagTileFunction(nextX, nextY, flagsInStep, x, y, startFloppyPositionx, startFloppyPositiony);
-            }
-            else if(_allCells[nextX, nextY].typeTile == 20.ToString())
-            {
-
-            }
-            else if (_allCells[nextX, nextY].typeTile == 2.ToString())
-            {
-                FloppyJump(nextX, nextY);
-                _allCells[nextX, nextY].typeTile = 20.ToString();
-                var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
-                DisappearingObj.Add(disappearingTileFunc);
-            }
-            else if(nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)
-            {
-                FloppyJump(nextX, nextY);
-
-                for(int i = 0; i < flagsInStep.Count; i++)
+                if (_allCells[nextX, nextY].typeTile == 1.ToString())
                 {
-                    var flagFunc = flagsInStep[i].GetComponent<FlagTile>();
-                    flagFunc.ChangeFlag(swipeDirection);
-
+                    FlagTileFunction(nextX, nextY, flagsInStep, x, y, startFloppyPositionx, startFloppyPositiony);
                 }
-                //endstep
+                else if (_allCells[nextX, nextY].typeTile != 1.ToString())
+                {
+                    if (_allCells[nextX, nextY].typeTile != 20.ToString())
+                    {
+                        FloppyJump(nextX, nextY);
+
+                        for (int i = 0; i < flagsInStep.Count; i++)
+                        {
+                            var flagFunc = flagsInStep[i].GetComponent<FlagTile>();
+                            flagFunc.ChangeFlag(swipeDirection);
+
+                        }
+                    }
+                    if (_allCells[nextX, nextY].typeTile == 2.ToString())
+                    {
+                        DisappearingCheckOnIt(nextX, nextY);
+                    }
+                    else if (_allCells[nextX, nextY].typeTile[0] == '6') // BombTile
+                    {
+                        BombTileCheckOnIt(nextX, nextY);
+                    }
+                    else if (_allCells[nextX, nextY].typeTile == 40.ToString()) // Change flag theo chieu doc
+                    {
+                        FlagChangeTileCheckOnIt(nextX, nextY, "Top");
+                    }
+                    else if (_allCells[nextX, nextY].typeTile == 41.ToString()) // Change flag theo chieu ngang
+                    {
+                        FlagChangeTileCheckOnIt(nextX, nextY, "Left");
+
+                    }
+                }
             }
             else
             {
@@ -577,7 +560,77 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-   
+    public void DisappearingCheckOnIt(int nextX, int nextY)
+    {
+        FloppyJump(nextX, nextY);
+        _allCells[nextX, nextY].typeTile = 20.ToString();
+        var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
+        disappearingTileFunc.HaveObjectOn();
+        Debug.Log("DisappearingOnTriger");
+        DisappearingObj.Add(disappearingTileFunc);
+
+        //FloppyJump(nextX, nextY);
+        //_allCells[nextX, nextY].typeTile = 20.ToString();
+        //var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
+        //DisappearingObj.Add(disappearingTileFunc);
+
+        //FloppyJump(nextX, nextY);
+        //_allCells[nextX, nextY].typeTile = 20.ToString();
+        //var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
+        //DisappearingObj.Add(disappearingTileFunc);
+    }
+    public void BombTileCheckOnIt(int nextX, int nextY)
+    {
+        FloppyJump(nextX, nextY);
+        StartCoroutine(WaitEndJumpToDoBombFunc(nextX, nextY));
+        
+    }
+    public IEnumerator WaitEndJumpToDoBombFunc(int nextX, int nextY)
+    {
+        yield return new WaitForSeconds(0.2f);
+        var connetedBombMarked = _allCells[nextX, nextY].ob.GetComponent<BombTile>().ConnetedBombMarked;
+        for (int i = 0; i < connetedBombMarked.Count; i++)
+        {
+            connetedBombMarked[i].GetComponent<BombMarkedTile>().Hiding();
+            int mx = (int)connetedBombMarked[i].transform.position.x;
+            int my = (int)connetedBombMarked[i].transform.position.y;
+            _allCells[mx, my].typeTile = 20.ToString();
+
+        }
+    }
+    public void FlagChangeTileCheckOnIt(int nextX, int nextY, string direction)
+    {
+        FloppyJump(nextX, nextY);
+        StartCoroutine(WaitEndJumpToDoFlagChangeFunc(nextX,nextY,direction));
+       
+    }
+    public IEnumerator WaitEndJumpToDoFlagChangeFunc(int nextX, int nextY, string direction)
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (direction == "Top")
+        {
+            for (int i = 0; i < FlagsAllCell.Count; i++)
+            {
+                if (FlagsAllCell[i].x == _allCells[nextX, nextY].x)
+                {
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
+                }
+            }
+        }
+        else if (direction == "Left")
+        {
+            for (int i = 0; i < FlagsAllCell.Count; i++)
+            {
+                if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
+                {
+                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Left");
+                }
+            }
+        }
+    }
+
+
+
 
     public void HideDisappearingTileAfterJumpOut()
     {
