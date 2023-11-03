@@ -21,6 +21,7 @@ public class DisappearingTile : MonoBehaviour
         //   new Vector3(0, 0, 0)));
         StopCoroutine("RePlayDisappearingOnTrigerIdelAnim");
         StopCoroutine("DisappearingOnTrigerIdelAnim");
+        StopCoroutine(scale);
 
         StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
           gameObject.gameObject.transform.localEulerAngles,
@@ -44,17 +45,19 @@ public class DisappearingTile : MonoBehaviour
         }
     }
 
-
+    IEnumerator scale;
     public IEnumerator DisappearingOnTrigerIdelAnim()
     {
-        StartCoroutine(0.6f.Tweeng((p) => gameObject.transform.localScale = p,
+        scale = 0.6f.Tweeng((p) => gameObject.transform.localScale = p,
          gameObject.transform.localScale,
-         new Vector3(0.85f, 0.85f, 0.85f)));
+         new Vector3(0.85f, 0.85f, 0.85f));
+        StartCoroutine(scale);
 
         yield return new WaitForSeconds(0.5f);
 
-        StartCoroutine(0.6f.Tweeng((p) => gameObject.transform.localScale = p,
+        scale = 0.6f.Tweeng((p) => gameObject.transform.localScale = p,
         gameObject.transform.localScale,
-        new Vector3(1f, 1f, 1f)));
+        new Vector3(1f, 1f, 1f));
+        StartCoroutine(scale);
     }
 }
