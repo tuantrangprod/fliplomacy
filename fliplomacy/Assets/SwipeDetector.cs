@@ -5,13 +5,11 @@ using UnityEngine;
 
 public class SwipeDetector : MonoBehaviour
 {
-    private const int mMessageWidth  = 200;
-    private const int mMessageHeight = 64;
+
 
     private readonly Vector2 mXAxis = new Vector2(1, 0);
     private readonly Vector2 mYAxis = new Vector2(0, 1);
 
-    private int mMessageIndex = 0;
 
     private const float mAngleRange = 30;
 
@@ -32,6 +30,8 @@ public class SwipeDetector : MonoBehaviour
     }
     bool canSwipe = false;
     bool canRescale = false;
+
+    [System.Obsolete]
     void Update () {
 
         if (floppyControll.canswipe && !floppyControll.floppyInWormHole)
@@ -88,7 +88,7 @@ public class SwipeDetector : MonoBehaviour
                         }
                         else
                         {
-                            mMessageIndex = 0;
+                            
                         }
                     }
                 }

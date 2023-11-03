@@ -24,6 +24,7 @@ public class MovingTileGroup : MonoBehaviour
                 if (i == CurrentStep)
                 {
                     movingTile = Instantiate(MovingTileSprite, arrayTile[i].transform.position, Quaternion.identity);
+                    movingTile.transform.SetParent(gameObject.transform.parent.transform.parent);
                 }
             }
         }

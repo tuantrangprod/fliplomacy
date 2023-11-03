@@ -9,6 +9,7 @@ public class GameManager : MonoBehaviour
 {
     
     public GameObject aCell;
+    public List<Sprite> sprite = new List<Sprite>();
     public Transform allCell;
     public GameObject Floppy;
     FloppyControll floppyControll;
@@ -85,7 +86,8 @@ public class GameManager : MonoBehaviour
             {
                 _allCells[i, j].x = i;
                 _allCells[i, j].y = j;
-                
+
+                aCell.transform.GetChild(0).GetComponent<SpriteRenderer>().sprite = sprite[UnityEngine.Random.Range(0, sprite.Count)];
                 var tile = Instantiate(aCell, new Vector3(i, j, 0), quaternion.identity);
                 tile.transform.SetParent(allCell);
 
@@ -94,7 +96,7 @@ public class GameManager : MonoBehaviour
                 if (_allCells[i, j].typeTile == "1")
                 {
                     var tileFlag = tile.AddComponent<FlagTile>();
-                    tileFlag.flag = Flags;
+                    tileFlag.flagSprite = Flags;
                     tileFlag.SetUP();
                     FlagsAllCell.Add(_allCells[i, j]);
                 }
@@ -279,6 +281,8 @@ public class GameManager : MonoBehaviour
             }
            // allBombTile[0].GetComponent<BombTile>().ConnetedBombMarked = allBombMarketTile;
         }
+
+        allCell.gameObject.GetComponent<CellsManager>().setUp();
     }
     public void MovingtileGroup()
     {

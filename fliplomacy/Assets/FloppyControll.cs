@@ -7,9 +7,13 @@ using UnityEngine;
 public class FloppyControll : MonoBehaviour
 {
     public float timeInAAnimLoop = 1f;
-    private GameObject floopySprite;
+    [HideInInspector] public GameObject floopySprite;
     //private GameObject floppyOnStart;
     //private GameObject floppyOnJump;
+    private void Awake()
+    {
+        canswipe = false;
+    }
     private void Start()
     {
         
@@ -17,7 +21,7 @@ public class FloppyControll : MonoBehaviour
         floopySprite = Instantiate(Sprite,  new Vector3(0,0,-2), quaternion.identity);
         floopySprite.gameObject.SetActive(true);
 
-        StartIdelAnim();
+       
 
     }
     IEnumerator floppyMove;

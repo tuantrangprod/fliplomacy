@@ -184,7 +184,6 @@ public class ToolSave : MonoBehaviour
     public void GenerateMovingTile()
     {
         List<ACell> allMovingTile = new List<ACell>();
-        int startCell = 0;
         int numberoflist = Int32.Parse(numberOfList.text);
         for (int i = 0; i < cells.Count; i++)
         {

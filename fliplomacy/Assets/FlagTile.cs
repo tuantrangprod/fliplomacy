@@ -5,13 +5,16 @@ using DigitalRuby.Tween;
 
 public class FlagTile : MonoBehaviour
 {
-    [HideInInspector] public GameObject flag;
+    [HideInInspector] public GameObject flagSprite;
     int flagStatus = 0;
     //private Color _color1;
     private Color _color;
+    private GameObject flag;
     public void SetUP()
     {
-        Instantiate(flag, gameObject.transform.position, Quaternion.identity).transform.SetParent(gameObject.transform);
+        flag = Instantiate(flagSprite, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y,-0.01f), Quaternion.identity);
+        flag.transform.SetParent(gameObject.transform.parent);
+        flag.name = "Flag";
         // SetColor();
         // gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject.GetComponent<SpriteRenderer>()
         //     .color = _color;
@@ -19,7 +22,6 @@ public class FlagTile : MonoBehaviour
     }
     public void ChangeFlag(string swipeDirection)
     {
-        var flag = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2);
         if (swipeDirection == "Left" || swipeDirection == "Right")
         {
             StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
@@ -41,7 +43,6 @@ public class FlagTile : MonoBehaviour
 
     public void SetColor()
     {
-        var flag = gameObject.transform.GetChild(1);
         if (flagStatus == 0)
         {
             flagStatus = 1;
@@ -57,11 +58,8 @@ public class FlagTile : MonoBehaviour
     }
     private void TweenColor()
     {
-        //var flagsprite = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject;
-        //var spriteRenderer = flagsprite.GetComponent<SpriteRenderer>();
-        //spriteRenderer.color = _color;
 
-        var flagsprite = gameObject.transform.GetChild(1).gameObject.transform.GetChild(2).gameObject;
+        var flagsprite = flag.gameObject.transform.GetChild(2).gameObject;
         var spriteRenderer = flagsprite.GetComponent<SpriteRenderer>();
         System.Action<ITween<Color>> updateColor = (t) =>
         {

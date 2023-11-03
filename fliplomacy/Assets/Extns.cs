@@ -35,4 +35,19 @@ public static class Extns
 
         var(zz);
     }
+    public static IEnumerator Tweeng(this float duration,
+        System.Action<Vector3> var, Vector3 aa, Vector3 zz, AnimationCurve curve)
+    {
+        float sT = Time.time;
+        float eT = sT + duration;
+
+        while (Time.time < eT)
+        {
+            float t = (Time.time - sT) / duration;
+            var(Vector3.Lerp(aa, zz, curve.Evaluate(Mathf.SmoothStep(0f, 1f, t))));
+            yield return null;
+        }
+
+        var(zz);
+    }
 }

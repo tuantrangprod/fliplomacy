@@ -15,7 +15,6 @@ public class WavePool : MonoBehaviour
     void Start()
     {
         pooledObjects = new List<GameObject>();
-        GameObject tmp;
         for (int i = 0; i < gameObject.transform.childCount; i++)
         {
             pooledObjects.Add(gameObject.transform.GetChild(i).gameObject);
