@@ -20,15 +20,16 @@ public class FloppyControll : MonoBehaviour
         StartIdelAnim();
 
     }
-    Coroutine floppyMove;
-    Coroutine floppyScale;
+    IEnumerator floppyMove;
+    IEnumerator floppyScale;
     public IEnumerator RePlayFloppyIdelAnim()
     {
-        StartCoroutine(FloppyIdelAnim());
+        StartCoroutine("FloppyIdelAnim");
         while (true)
         {
             yield return new WaitForSeconds(timeInAAnimLoop * 2);
-            StartCoroutine(FloppyIdelAnim());
+            StartCoroutine("FloppyIdelAnim");
+            Debug.Log("Scale");
         }
     }
     
@@ -43,21 +44,27 @@ public class FloppyControll : MonoBehaviour
     }
     public void StartIdelAnim()
     {
-        StartCoroutine(RePlayFloppyIdelAnim());
+        StartCoroutine("RePlayFloppyIdelAnim");
     }
     public void StopIdelAnim()
     {
-        StopCoroutine(RePlayFloppyIdelAnim());
+        StopCoroutine("FloppyIdelAnim");
+        StopCoroutine("RePlayFloppyIdelAnim");
 
     }
     public bool canswipe = true;
+
+    [Obsolete]
     public void StartJumpAnim()
     {
         floopySprite.transform.position = gameObject.transform.position -  new Vector3(0,0,2);
 
         StopIdelAnim();
+      
 
         FloopySpriteScale(0.1f, new Vector3(0.2f, 0.2f, 0.2f));
+
+          EffectWhenEndMove(0.6f,0.2f);
     }
 
     public void FloppyReScale()
@@ -71,6 +78,7 @@ public class FloppyControll : MonoBehaviour
 
         yield return new WaitForSeconds(0.1f);
         StartIdelAnim();
+        Debug.Log("EndStartJumpAnim");
 
 
 
@@ -80,6 +88,8 @@ public class FloppyControll : MonoBehaviour
     public Vector3 movingTilePos = new Vector3();
     public float wormholeStartPosX;
     public float wormholeStartPosY;
+
+    [Obsolete]
     public void JumpAnim()
     {
         canswipe = false;
@@ -101,7 +111,7 @@ public class FloppyControll : MonoBehaviour
         }
         else
         {
-            FloopySpriteMove(new Vector3(wormholeStartPosX, wormholeStartPosX, floopySprite.transform.position.z));
+            FloopySpriteMove(new Vector3(wormholeStartPosX, wormholeStartPosY, floopySprite.transform.position.z));
             StartCoroutine(TeleportThroughWormholes());
         }
 
@@ -113,16 +123,18 @@ public class FloppyControll : MonoBehaviour
         var floopySpriteWormHoleClone = Instantiate(floopySprite, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, -2), quaternion.identity);
 
         StartCoroutine(0.5f.Tweeng((p) => floopySpriteWormHoleClone.transform.localScale = p,
-            floopySpriteWormHoleClone.transform.localScale,
+            new Vector3(0f, 0f, 0f),
             new Vector3(0.5f, 0.5f, 0.5f)));
 
         FloopySpriteScale(0.5f, new Vector3(0f, 0f, 0f));
+
         StartCoroutine(EndTeleport(floopySpriteWormHoleClone));
     }
     IEnumerator EndTeleport(GameObject clone)
     {
         yield return new WaitForSeconds(0.5f);
         floppyInWormHole = false;
+        canswipe = true;
         floopySprite.transform.position = gameObject.transform.position - new Vector3(0, 0, 2);
         floopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         Destroy(clone);
@@ -131,12 +143,30 @@ public class FloppyControll : MonoBehaviour
 
     public bool haveMovingTile = false;
 
+    [Obsolete]
+    public void EffectWhenEndMove(float size, float lifetime)
+    {
+        GameObject waveEfect = WavePool.SharedInstance.GetPooledObject();
+        if (waveEfect != null)
+        {
+            waveEfect.transform.position = new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, 0);
+            waveEfect.GetComponent<ParticleSystem>().startSize = size;
+            waveEfect.GetComponent<ParticleSystem>().startLifetime = lifetime;
+            waveEfect.gameObject.SetActive(true);
+        }
+    }
+
+    [Obsolete]
     IEnumerator FloppySpriteEndJumpAnim(float time)
     {
         yield return new WaitForSeconds(time);
         StartIdelAnim();
         if (!inMovingTile)
         {
+            // Effect
+            EffectWhenEndMove(1.1f,0.5f);
+
+
             if (!haveMovingTile)
             {
                 canswipe = true;
@@ -149,7 +179,7 @@ public class FloppyControll : MonoBehaviour
         }
         else
         {
-            FloopySpriteMove(gameObject.transform.position);
+            FloopySpriteMove(gameObject.transform.position - new Vector3(0, 0, 2));
             StartCoroutine(WaitMovingTileEnd());
             if (!haveMovingTile)
             {
@@ -179,9 +209,8 @@ public class FloppyControll : MonoBehaviour
         {
             StopCoroutine(floppyMove);
         }
-        floppyMove = StartCoroutine(0.2f.Tweeng((p) => floopySprite.transform.position = p,
-         floopySprite.transform.position,
-         pos));
+        floppyMove = TweengMove(0.2f, floopySprite.transform.position, pos);
+        StartCoroutine(floppyMove);
     }
     void FloopySpriteScale(float time, Vector3 scale)
     {
@@ -189,10 +218,37 @@ public class FloppyControll : MonoBehaviour
         {
             StopCoroutine(floppyScale);
         }
-        floppyScale = StartCoroutine(time.Tweeng((p) => floopySprite.transform.localScale = p,
-             floopySprite.transform.localScale,
-             scale));
+        floppyScale = TweengScale(time, floopySprite.transform.localScale, scale);
+        StartCoroutine(floppyScale);
     }
+    public IEnumerator TweengScale(float duration, Vector3 aa, Vector3 zz)
+    {
+        float sT = Time.time;
+        float eT = sT + duration;
 
+        while (Time.time < eT)
+        {
+            float t = (Time.time - sT) / duration;
+             floopySprite.transform.localScale = Vector3.Lerp(aa, zz, Mathf.SmoothStep(0f, 1f, t));
+       
+            yield return null;
+        }
+
+        floopySprite.transform.localScale = zz; 
+    }
+    public IEnumerator TweengMove(float duration, Vector3 aa, Vector3 zz)
+    {
+        float sT = Time.time;
+        float eT = sT + duration;
+
+        while (Time.time < eT)
+        {
+            float t = (Time.time - sT) / duration;
+            floopySprite.transform.position = Vector3.Lerp(aa, zz, Mathf.SmoothStep(0f, 1f, t));
+            yield return null;
+        }
+
+        floopySprite.transform.position = zz;
+    }
 
 }

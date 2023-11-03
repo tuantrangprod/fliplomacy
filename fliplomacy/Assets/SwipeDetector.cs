@@ -104,7 +104,7 @@ public class SwipeDetector : MonoBehaviour
 
             if (Input.GetMouseButtonUp(0))
             {
-                if (canRescale && !floppyControll.floppyInWormHole)
+                if (canRescale)
                 {
                     floppyControll.FloppyReScale();
                     canRescale = false;

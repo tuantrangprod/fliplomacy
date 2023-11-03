@@ -406,8 +406,8 @@ public class GameManager : MonoBehaviour
                FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.x);
 
             }
-        else if (_allCells[nextX, nextY].typeTile == 2.ToString())
-        {
+        else if (_allCells[nextX, nextY].typeTile == 2.ToString()) //Disappearing
+            {
             FloppyJump(nextX, nextY);
             _allCells[nextX, nextY].typeTile = 20.ToString();
             var disappearingTileFunc = _allCells[nextX, nextY].ob.GetComponent<DisappearingTile>();
@@ -419,7 +419,7 @@ public class GameManager : MonoBehaviour
             // cai nay dung trong truong hop muon nhay qua o da bi an
             // con khong thi khong lam gi ca
         }
-        else if (_allCells[nextX, nextY].typeTile[0] == '6')
+        else if (_allCells[nextX, nextY].typeTile[0] == '6') // BombTile
         {
             FloppyJump(nextX, nextY);
             var connetedBombMarked = _allCells[nextX, nextY].ob.GetComponent<BombTile>().ConnetedBombMarked;
@@ -431,12 +431,9 @@ public class GameManager : MonoBehaviour
                 _allCells[mx, my].typeTile = 20.ToString();
         
             }
-            //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
-            // cai nay dung trong truong hop muon nhay qua o da bi an
-            // con khong thi khong lam gi ca
         }
-        else if (_allCells[nextX, nextY].typeTile == 40.ToString())
-        {
+        else if (_allCells[nextX, nextY].typeTile == 40.ToString()) // Change flag theo chieu doc
+            {
             FloppyJump(nextX, nextY);
                 
             for (int i = 0; i< FlagsAllCell.Count; i++)
@@ -451,7 +448,7 @@ public class GameManager : MonoBehaviour
         else if (_allCells[nextX, nextY].typeTile == 41.ToString())
         {
             FloppyJump(nextX, nextY);
-            //Debug.Log(_allCells[nextX, nextY].x +"   "+ _allCells[nextX, nextY].y);
+            //Debug.Log(_allCells[nextX, nextY].x +"   "+ _allCells[nextX, nextY].y); // Change flag theo chieu ngang
             for (int i = 0; i < FlagsAllCell.Count; i++)
             {
                 if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
@@ -466,6 +463,54 @@ public class GameManager : MonoBehaviour
         }
         } 
 
+    }
+    public void FloppyJump(int nextX, int nextY)
+    {
+        floppyPosition.x = nextX;
+        floppyPosition.y = nextY;
+        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
+        HideDisappearingTileAfterJumpOut();
+
+        if (_allCells[nextX, nextY].typeTile[0] == '3') // Sau khi jum moi check wormHole
+        {
+            var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
+
+            Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
+            floppyControll.wormholeStartPosX = floppyPosition.x;
+            floppyControll.wormholeStartPosY = floppyPosition.y;
+            floppyControll.floppyInWormHole = true;
+
+            //floppyControll.TeleAnim(floppyPosition.x, floppyPosition.y);
+
+            floppyPosition.x = (int)conneted.x;
+            floppyPosition.y = (int)conneted.y;
+        }
+        if (movingTileGroups.Count > 0) // Sau khi jum moi check moving tile
+        {
+            bool inMoving = false;
+            var mtg = new MovingTileGroup();
+            for (int i = 0; i < movingTileGroups.Count; i++)
+            {
+                int tileX = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.x;
+                int tileY = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.y;
+
+                if (floppyPosition.x == tileX && floppyPosition.y == tileY)
+                {
+                    inMoving = true;
+                    floppyControll.inMovingTile = true;
+                    mtg = movingTileGroups[i];
+                    floppyControll.movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
+                }
+            }
+            MovingtileGroupAfterJump();
+            if (inMoving)
+            {
+                Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
+                floppyPosition.x = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.x;
+                floppyPosition.y = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.y;
+            }
+        }
+        floppyControll.JumpAnim();
     }
     public void FlagTileFunction(int nextX, int nextY, List<GameObject> flagsInStep,
         int x, int y, int startFloppyPositionx, int startFloppyPositiony)
@@ -532,54 +577,7 @@ public class GameManager : MonoBehaviour
             }
         }
     }
-    public void FloppyJump(int nextX, int nextY)
-    {
-        floppyPosition.x = nextX;
-        floppyPosition.y = nextY;
-        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
-        HideDisappearingTileAfterJumpOut();
-
-        if(_allCells[nextX, nextY].typeTile[0] == '3')
-        {
-            var conneted = _allCells[nextX, nextY].ob.GetComponent<WormholeTile>().ConnetedObject.transform.position;
-            
-            Floppy.transform.position = new Vector3(conneted.x, conneted.y, -1);
-            floppyControll.wormholeStartPosX = floppyPosition.x;
-            floppyControll.wormholeStartPosY = floppyPosition.y;
-            floppyControll.floppyInWormHole = true;
-
-            //floppyControll.TeleAnim(floppyPosition.x, floppyPosition.y);
-
-            floppyPosition.x = (int)conneted.x;
-            floppyPosition.y = (int)conneted.y;
-        }
-        if(movingTileGroups.Count > 0)
-        {
-            bool inMoving = false;
-            var mtg = new MovingTileGroup();
-            for (int i = 0; i < movingTileGroups.Count; i++)
-            {
-                int tileX = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.x;
-                int tileY = (int)movingTileGroups[i].arrayTile[movingTileGroups[i].CurrentStep].transform.position.y;
-
-                if (floppyPosition.x == tileX && floppyPosition.y == tileY)
-                {
-                    inMoving = true;
-                    floppyControll.inMovingTile = true;
-                    mtg = movingTileGroups[i];
-                    floppyControll.movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
-                }
-            }
-            MovingtileGroupAfterJump();
-            if (inMoving)
-            {          
-                Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
-                floppyPosition.x = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.x;
-                floppyPosition.y = (int)mtg.arrayTile[mtg.CurrentStep].transform.position.y;
-            }
-        }
-        floppyControll.JumpAnim();
-    }
+   
 
     public void HideDisappearingTileAfterJumpOut()
     {
