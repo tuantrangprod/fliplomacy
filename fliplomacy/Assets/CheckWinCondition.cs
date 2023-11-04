@@ -51,7 +51,7 @@ public class CheckWinCondition : MonoBehaviour
         {
             flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
         }
-        StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position + new Vector3(0, 350, 0),curve));
+        StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position + new Vector3(0, 700, 0),curve));
     }
     public void rePlayBtn()
     {
@@ -64,16 +64,16 @@ public class CheckWinCondition : MonoBehaviour
     {
         
         yield return new WaitForSeconds(1);
-        StartCoroutine(2f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position - new Vector3(0, 350, 0), curve));
-        StartCoroutine(2f.Tweeng((p) => btn.transform.position = p, btn.transform.position, btn.transform.position + new Vector3(0, 350, 0), curve));
-        StartCoroutine(1f.Tweeng((p) => bg.transform.position = p, bg.transform.position, bg.transform.position + new Vector3(2000, 0, 0)));
+        StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position - new Vector3(0, 700, 0), curve));
+        StartCoroutine(1.5f.Tweeng((p) => btn.transform.position = p, btn.transform.position, btn.transform.position + new Vector3(0, 700, 0), curve));
+        StartCoroutine(1f.Tweeng((p) => bg.transform.position = p, bg.transform.position, bg.transform.position + new Vector3(2694, 0, 0)));
 
         StartCoroutine(ReLoadMainMenu());
     }
     public IEnumerator ReLoadMainMenu()
     {
 
-        yield return new WaitForSeconds(2);
+        yield return new WaitForSeconds(1.5f);
 
         SceneManager.LoadScene(0);
     }
