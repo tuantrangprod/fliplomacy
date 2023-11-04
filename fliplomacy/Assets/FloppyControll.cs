@@ -8,6 +8,7 @@ public class FloppyControll : MonoBehaviour
 {
     public float timeInAAnimLoop = 1f;
     [HideInInspector] public GameObject floopySprite;
+    public event Action EndJump;
     //private GameObject floppyOnStart;
     //private GameObject floppyOnJump;
     private void Awake()
@@ -20,8 +21,6 @@ public class FloppyControll : MonoBehaviour
         var Sprite = gameObject.transform.GetChild(0).gameObject;
         floopySprite = Instantiate(Sprite,  new Vector3(0,0,-2), quaternion.identity);
         floopySprite.gameObject.SetActive(true);
-
-       
 
     }
     IEnumerator floppyMove;
@@ -142,6 +141,7 @@ public class FloppyControll : MonoBehaviour
         floopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         Destroy(clone);
         StartIdelAnim();
+        EventEndJump();
     }
 
     public bool haveMovingTile = false;
@@ -158,7 +158,10 @@ public class FloppyControll : MonoBehaviour
             waveEfect.gameObject.SetActive(true);
         }
     }
-
+    public void EventEndJump()
+    {
+        EndJump?.Invoke();
+    }
     [Obsolete]
     IEnumerator FloppySpriteEndJumpAnim(float time)
     {
@@ -168,11 +171,12 @@ public class FloppyControll : MonoBehaviour
         {
             // Effect
             EffectWhenEndMove(1.1f,0.5f);
-
+            
 
             if (!haveMovingTile)
             {
                 canswipe = true;
+                EventEndJump();
             }
             else
             {
@@ -183,21 +187,17 @@ public class FloppyControll : MonoBehaviour
         else
         {
             FloopySpriteMove(gameObject.transform.position - new Vector3(0, 0, 2));
+
             StartCoroutine(WaitMovingTileEnd());
-            if (!haveMovingTile)
-            {
-                canswipe = true;
-            }
-            else
-            {
-                StartCoroutine(WaitMovingTile());
-            }
+
+            StartCoroutine(WaitMovingTile());
         }
     }
     public IEnumerator WaitMovingTile()
     {
         yield return new WaitForSeconds(0.2f);
         canswipe = true;
+        EventEndJump();
     }
 
     public IEnumerator WaitMovingTileEnd()

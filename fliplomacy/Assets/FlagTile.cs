@@ -6,7 +6,7 @@ using DigitalRuby.Tween;
 public class FlagTile : MonoBehaviour
 {
     [HideInInspector] public GameObject flagSprite;
-    int flagStatus = 0;
+    [HideInInspector] public int flagStatus = 0;
     //private Color _color1;
     private Color _color;
     private GameObject flag;
@@ -68,5 +68,33 @@ public class FlagTile : MonoBehaviour
         var key = Random.Range(0, 1000000);
         flagsprite.gameObject.Tween(key.ToString(), spriteRenderer.color,
             _color, 0.1f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
+    }
+    public void WinGameAnin(string key, Color color, AnimationCurve curve, GameObject wave)
+    {
+        var flagbackgroundsprite = gameObject.transform.GetChild(0).gameObject;
+        var spriteRenderer = flagbackgroundsprite.GetComponent<SpriteRenderer>();
+        System.Action<ITween<Color>> updateColor = (t) =>
+        {
+               spriteRenderer.color = t.CurrentValue;
+        };
+        flagbackgroundsprite.gameObject.Tween(key, spriteRenderer.color,
+               color, 0.2f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
+        gameObject.transform.position -= new Vector3(0, 0, 2);
+        flag.transform.position -= new Vector3(0, 0, 2);
+        StartCoroutine(RoatateFlag(curve));
+        StartCoroutine(SquareEffect(wave));
+
+    }
+    IEnumerator RoatateFlag(AnimationCurve curve)
+    {
+        yield return new WaitForSeconds(0.2f);
+        StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localEulerAngles = p, gameObject.transform.localEulerAngles + new Vector3(0, 0, 180), gameObject.transform.localEulerAngles));
+        StartCoroutine(0.8f.Tweeng((p) => gameObject.transform.localScale = p, gameObject.transform.localScale, gameObject.transform.localScale*1.06f, curve));
+    }
+    IEnumerator SquareEffect(GameObject wave)
+    {
+        yield return new WaitForSeconds(0.5f);
+        Instantiate(wave, gameObject.transform.position + new Vector3(0, 0, 0.5f), Quaternion.identity);
+        
     }
 }
