@@ -10,7 +10,12 @@ public class UI : MonoBehaviour
     public float distanceX;
     public float distanceY;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    startPos = gameObject.transform.position;
+    //    endPos = startPos + new Vector3(distanceX, distanceY, 0);
+    //}
+    public void SetUp()
     {
         startPos = gameObject.transform.position;
         endPos = startPos + new Vector3(distanceX, distanceY, 0);

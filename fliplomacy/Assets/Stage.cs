@@ -9,46 +9,97 @@ using TMPro;
 
 public class Stage : MonoBehaviour
 {
+    public int numberLevel;
     public int curentLevel;
+   
     public List<Button> btnLevel = new List<Button>();
+    public List<Button> btnLevelUnLock = new List<Button>();
     public List<Button> btnLevelCanPick = new List<Button>();
+
+    public List<GameObject> level;
     GameObject currentBgBtn;
+    [HideInInspector] public GameObject aStage;
     public bool canClick = true;
     public void Start()
     {
+        aStage = gameObject.transform.GetChild(0).gameObject;
         btnLevel = GetComponentsInChildren<Button>().ToList();
-        for(int i = 0; i< btnLevel.Count; i++)
+        for (int i = 0; i < btnLevel.Count; i++)
         {
-            btnLevel[i].gameObject.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text= (i+1).ToString();
-            if(i<= curentLevel)
+            btnLevel[i].gameObject.transform.GetChild(4).GetComponent<TextMeshProUGUI>().text = (i + 1).ToString();
+        }
+        //object a;
+        //GameObject b = a;
+        //LoadLevel();
+    }
+    public void LoadLevel()
+    {
+        Debug.Log(numberLevel);
+        btnLevelUnLock = new List<Button>();
+        for (int i = 0; i < btnLevel.Count; i++)
+        {
+            if (i > numberLevel - 1)
             {
-                btnLevelCanPick.Add(btnLevel[i]);
-                if(i < curentLevel )
+                btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
+                btnLevel[i].gameObject.transform.GetChild(4).gameObject.SetActive(false);
+                btnLevel[i].gameObject.transform.GetChild(5).gameObject.SetActive(true);
+            }
+            else
+            {
+                btnLevelUnLock.Add(btnLevel[i]);
+            }
+        }
+        for (int i = 0; i < btnLevelUnLock.Count; i++)
+        {
+
+            if (i <= curentLevel)
+            {
+                btnLevelCanPick.Add(btnLevelUnLock[i]);
+                if (i < curentLevel)
                 {
-                    btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(true);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(1).gameObject.SetActive(true);
+
+                    btnLevelUnLock[i].gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(2).gameObject.SetActive(false);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(3).gameObject.SetActive(false);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(5).gameObject.SetActive(false);
                 }
                 else if (i == curentLevel)
                 {
 
-                        btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
-                        btnLevel[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
-                        btnLevel[i].gameObject.transform.GetChild(0).gameObject.SetActive(true);     
+                    
+                    btnLevelUnLock[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(0).gameObject.SetActive(true);
+
+                    btnLevelUnLock[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(3).gameObject.SetActive(false);
+                    btnLevelUnLock[i].gameObject.transform.GetChild(5).gameObject.SetActive(false);
+
                 }
-                
-                
+
+
             }
             else
             {
-                btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
-                btnLevel[i].gameObject.transform.GetChild(3).gameObject.SetActive(true);
+                btnLevelUnLock[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
+                btnLevelUnLock[i].gameObject.transform.GetChild(3).gameObject.SetActive(true);
+
+
+                btnLevelUnLock[i].gameObject.transform.GetChild(0).gameObject.SetActive(false);
+                btnLevelUnLock[i].gameObject.transform.GetChild(2).gameObject.SetActive(false);
+                btnLevelUnLock[i].gameObject.transform.GetChild(5).gameObject.SetActive(false);
             }
-           
+
         }
-        if (curentLevel > btnLevel.Count - 1)
+        if (curentLevel > btnLevelUnLock.Count - 1 && btnLevelUnLock.Count > 0)
         {
-            btnLevel[btnLevel.Count - 1].gameObject.transform.GetChild(1).gameObject.SetActive(true);
-            btnLevel[btnLevel.Count - 1].gameObject.transform.GetChild(0).gameObject.SetActive(true);
-            curentLevel = btnLevel.Count - 1;
+            btnLevelUnLock[btnLevelUnLock.Count - 1].gameObject.transform.GetChild(1).gameObject.SetActive(true);
+            btnLevelUnLock[btnLevelUnLock.Count - 1].gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            btnLevelUnLock[btnLevelUnLock.Count - 1].gameObject.transform.GetChild(2).gameObject.SetActive(false);
+            btnLevelUnLock[btnLevelUnLock.Count - 1].gameObject.transform.GetChild(3).gameObject.SetActive(false);
+            btnLevelUnLock[btnLevelUnLock.Count - 1].gameObject.transform.GetChild(5).gameObject.SetActive(false);
+
+            curentLevel = btnLevelUnLock.Count - 1;
         }
 
         //= GetComponentsInChildren<Button>();

@@ -12,17 +12,10 @@ public class CheckWinCondition : MonoBehaviour
     public Color color;
     public AnimationCurve curve;
     public GameObject squareWave;
-
-    public GameObject btnRePlay;
-    public GameObject bg;
-    public GameObject btn;
-    Vector3 bgPos;
     void Start()
     {
         floppy = GetComponent<GameManager>().Floppy.GetComponent<FloppyControll>();
         floppy.EndJump += WinCondition;
-        bgPos = bg.transform.position;
-        bg.transform.position -= new Vector3(2000, 0, 0);
 
     }
     public void RegisterEndJump()
@@ -58,8 +51,6 @@ public class CheckWinCondition : MonoBehaviour
     }
     public void rePlayBtn()
     {
-        var a = btnRePlay.transform.GetChild(0).GetComponent<Button>();
-        Destroy(a);
         StartCoroutine(1f.Tweeng((p) => Camera.main.transform.position = p, Camera.main.transform.position, Camera.main.transform.position + new Vector3(10, 0, 0)));
         StartCoroutine(ReLoadMenu());
     }
@@ -67,10 +58,6 @@ public class CheckWinCondition : MonoBehaviour
     {
         
         yield return new WaitForSeconds(1);
-        StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position - new Vector3(0, 700, 0), curve));
-        StartCoroutine(1.5f.Tweeng((p) => btn.transform.position = p, btn.transform.position, btn.transform.position + new Vector3(0, 700, 0), curve));
-        StartCoroutine(1f.Tweeng((p) => bg.transform.position = p, bg.transform.position, bgPos));
-
         StartCoroutine(ReLoadMainMenu());
     }
     public IEnumerator ReLoadMainMenu()

@@ -6,8 +6,11 @@ using UnityEngine;
 public class StageManager : MonoBehaviour
 {
     public List<Stage> stages = new List<Stage>();
+    public List<Object> Level = new List<Object>();
+    public UIManager uiManager;
     public GameObject backStage;
     public GameObject nextStage;
+    public int levelUnlock = 0;
     public int CurrentStage = 0;
     public bool canBack = false;
     public bool canNext = true;
@@ -15,15 +18,55 @@ public class StageManager : MonoBehaviour
     public float speedFlip;
     void Start()
     {
+        var temp = Resources.LoadAll("LevelDesign", typeof(GameObject));
+        Level = temp.ToList();
         stages = GetComponentsInChildren<Stage>().ToList();
-        for(int i = 0; i< stages.Count; i++)
-        {
-            if(i != CurrentStage)
-            {
-                stages[i].gameObject.SetActive(false);
-            }
-        }
+       
         checkCanBackOrNext();
+    }
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            levelUnlock++;
+            LoadLevelData();
+        }
+       
+    }
+    void LoadLevelData()
+    {
+        var sumLevelHavePrefab = Level.Count;
+        var numberLevel = 0;
+
+        var sumlevelUnlock = levelUnlock;
+        var curentLevel = 0;
+        for (int i = 0; i < stages.Count; i++)
+        {
+            if(sumLevelHavePrefab > 9)
+            {
+                numberLevel = 9;
+                sumLevelHavePrefab -= 9;
+            }
+            else
+            {
+                numberLevel = sumLevelHavePrefab;
+                sumLevelHavePrefab = 0;
+            }
+            stages[i].numberLevel = numberLevel;
+
+            if (levelUnlock > 9)
+            {
+                curentLevel = 9;
+                sumlevelUnlock -= 9;
+            }
+            else
+            {
+                curentLevel = sumlevelUnlock;
+                sumlevelUnlock = 0;
+            }
+            stages[i].curentLevel = curentLevel;
+            stages[i].LoadLevel();
+        }
     }
 
     public void backStageCick()
@@ -92,13 +135,13 @@ public class StageManager : MonoBehaviour
     }
     public IEnumerator DoFlipAnim(int num)
     {
-        StartCoroutine(speedFlip.Tweeng((p) => stages[CurrentStage + num ].transform.localEulerAngles = p, stages[CurrentStage + num].transform.localEulerAngles, stages[CurrentStage + num].transform.localEulerAngles + new Vector3(-90, 0, 0)));
-        stages[CurrentStage].transform.localEulerAngles += new Vector3(-90, 0, 0);
+        StartCoroutine(speedFlip.Tweeng((p) => stages[CurrentStage + num ].aStage.transform.localEulerAngles = p, stages[CurrentStage + num].aStage.transform.localEulerAngles, stages[CurrentStage + num].aStage.transform.localEulerAngles + new Vector3(-90, 0, 0)));
+        stages[CurrentStage].aStage.transform.localEulerAngles += new Vector3(-90, 0, 0);
         yield return new WaitForSeconds(speedFlip);
-        stages[CurrentStage + num].gameObject.SetActive(false);
-        stages[CurrentStage + num].transform.localEulerAngles += new Vector3(90, 0, 0);
-        stages[CurrentStage].gameObject.SetActive(true);
-        StartCoroutine(speedFlip.Tweeng((p) => stages[CurrentStage].transform.localEulerAngles = p, stages[CurrentStage].transform.localEulerAngles, stages[CurrentStage].transform.localEulerAngles + new Vector3(90, 0, 0)));
+        stages[CurrentStage + num].aStage.gameObject.SetActive(false);
+        stages[CurrentStage + num].aStage.transform.localEulerAngles += new Vector3(90, 0, 0);
+        stages[CurrentStage].aStage.gameObject.SetActive(true);
+        StartCoroutine(speedFlip.Tweeng((p) => stages[CurrentStage].aStage.transform.localEulerAngles = p, stages[CurrentStage].aStage.transform.localEulerAngles, stages[CurrentStage].aStage.transform.localEulerAngles + new Vector3(90, 0, 0)));
         StartCoroutine(WaitFlipEnd());
     }
     public IEnumerator WaitFlipEnd()
@@ -109,5 +152,20 @@ public class StageManager : MonoBehaviour
             stage.canClick = true;
         }
         canClick = true;
+    }
+    public void clickLoadGameBtn()
+    {
+        uiManager.ClickLoadGameBtn();
+    }
+    public void ClickLoadLevelBtn()
+    {
+        LoadLevelData();
+        for (int i = 0; i < stages.Count; i++)
+        {
+            if (i != CurrentStage)
+            {
+                stages[i].aStage.gameObject.SetActive(false);
+            }
+        }
     }
 }

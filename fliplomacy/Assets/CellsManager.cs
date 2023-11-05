@@ -31,6 +31,10 @@ public class CellsManager : MonoBehaviour
            
         }
         DoStartAnim();
+        backSelectLevelPanel.gameObject.SetActive(true);
+        inGameButonPanel.gameObject.SetActive(true);
+        backSelectLevelPanel.SetUp();
+        inGameButonPanel.SetUp();
         backSelectLevelPanel.TeleToEndPos();
         inGameButonPanel.TeleToEndPos();
 

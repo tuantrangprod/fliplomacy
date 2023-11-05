@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
     {
         floppyControll = Floppy.GetComponent<FloppyControll>();
        
-        CreateLevel();
+        //CreateLevel();
     }
     public void ClearLevel()
     {
