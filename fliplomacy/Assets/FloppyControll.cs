@@ -14,14 +14,29 @@ public class FloppyControll : MonoBehaviour
     private void Awake()
     {
         canswipe = false;
+
     }
-    private void Start()
+    public void SetUp()
     {
         
-        var Sprite = gameObject.transform.GetChild(0).gameObject;
-        floopySprite = Instantiate(Sprite,  new Vector3(0,0,-2), quaternion.identity);
+        var sprite = gameObject.transform.GetChild(0).gameObject;
+        sprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        floopySprite = Instantiate(sprite,  new Vector3(0,0,-2), quaternion.identity);
         floopySprite.gameObject.SetActive(true);
 
+    }
+    public void ClearLevel()
+    {
+        canswipe = false;
+        floppyInWormHole = false;
+        inMovingTile = false;
+        haveMovingTile = false;
+        StopIdelAnim();
+        if (floopySprite != null)
+        {
+            Destroy(floopySprite);
+        }
+        
     }
     IEnumerator floppyMove;
     IEnumerator floppyScale;
@@ -229,29 +244,35 @@ public class FloppyControll : MonoBehaviour
         float sT = Time.time;
         float eT = sT + duration;
 
-        while (Time.time < eT)
+        while (Time.time < eT && floopySprite != null)
         {
             float t = (Time.time - sT) / duration;
              floopySprite.transform.localScale = Vector3.Lerp(aa, zz, Mathf.SmoothStep(0f, 1f, t));
        
             yield return null;
         }
-
-        floopySprite.transform.localScale = zz; 
+        if(floopySprite != null)
+        {
+            floopySprite.transform.localScale = zz;
+        }
+         
     }
     public IEnumerator TweengMove(float duration, Vector3 aa, Vector3 zz)
     {
         float sT = Time.time;
         float eT = sT + duration;
 
-        while (Time.time < eT)
+        while (Time.time < eT && floopySprite != null)
         {
             float t = (Time.time - sT) / duration;
             floopySprite.transform.position = Vector3.Lerp(aa, zz, Mathf.SmoothStep(0f, 1f, t));
             yield return null;
         }
-
-        floopySprite.transform.position = zz;
+        if (floopySprite != null)
+        {
+            floopySprite.transform.position = zz;
+        }
+       
     }
 
 }

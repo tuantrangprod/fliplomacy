@@ -35,4 +35,13 @@ public class MovingTileGroup : MonoBehaviour
           movingTile.transform.position,
            arrayTile[CurrentStep].transform.position));
     }
+    public void ClearLevel()
+    {
+        allMovingTile.Clear();
+        arrayTile = new GameObject[5];
+        CurrentStep = 1;
+        UporBack = 1;
+        movingTile = null;
+
+    }
 }

@@ -30,6 +30,15 @@ public class CellsManager : MonoBehaviour
         DoStartAnim();
 
     }
+    public void ClearLevel()
+    {
+        for (int i = 1; i < gameObject.transform.childCount; i++)
+        {
+            Destroy(gameObject.transform.GetChild(i).gameObject);
+            otherObject.Clear();
+            flagObject.Clear();
+        }
+    }
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.T))

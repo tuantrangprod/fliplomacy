@@ -45,7 +45,7 @@ public class CheckWinCondition : MonoBehaviour
         {
             Debug.Log("Win");
             floppy.canswipe = false;
-            //WInAnim();
+            WInAnim();
         }
     }
     void WInAnim()
@@ -54,7 +54,7 @@ public class CheckWinCondition : MonoBehaviour
         {
             flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
         }
-        StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position + new Vector3(0, 700, 0),curve));
+        //StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position + new Vector3(0, 700, 0),curve));
     }
     public void rePlayBtn()
     {
@@ -78,6 +78,6 @@ public class CheckWinCondition : MonoBehaviour
 
         yield return new WaitForSeconds(1.5f);
 
-        SceneManager.LoadScene(0);
+        //SceneManager.LoadScene(0);
     }
 }

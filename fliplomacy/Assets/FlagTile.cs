@@ -94,7 +94,7 @@ public class FlagTile : MonoBehaviour
     IEnumerator SquareEffect(GameObject wave)
     {
         yield return new WaitForSeconds(0.5f);
-        Instantiate(wave, gameObject.transform.position + new Vector3(0, 0, 0.5f), Quaternion.identity);
+        Instantiate(wave, gameObject.transform.position + new Vector3(0, 0, 0.5f), Quaternion.identity).transform.SetParent(gameObject.transform.parent);
         
     }
 }

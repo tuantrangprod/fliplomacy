@@ -7,41 +7,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    
-    public GameObject aCell;
-    public List<Sprite> sprite = new List<Sprite>();
-    public Transform allCell;
-    public GameObject Floppy;
-    FloppyControll floppyControll;
-
-    public GameObject Flags;
-    //List<GameObject> FlagsObj = new List<GameObject>();
-
-    public GameObject Disappearing;
-    List<DisappearingTile> DisappearingObj = new List<DisappearingTile>();// dung cho Disappearing tile
-
-    public GameObject Wormhole;
-    public List<Color> WormholeColor = new List<Color>();
-    public List<float> WormholeSpeed= new List<float>();
-    List<GameObject> WormholeObj = new List<GameObject>();
-
-    public GameObject FlagChaningDoc;
-    //List<GameObject> FlagChaningDocObj = new List<GameObject>();
-
-    public GameObject FlagChaningNgang;
-    //List<GameObject> FlagChaningNgangObj = new List<GameObject>();
-
-    public GameObject MovingTileSprite;
-    public List<MovingTileGroup> movingTileGroups = new List<MovingTileGroup>();
-    List<GameObject> allMovingTiles = new List<GameObject>();
-
-    public GameObject BombTileSprite;
-    List<GameObject> allBombTile = new List<GameObject>();
-
-    public GameObject BombMarketSprite;
-    List<GameObject> allBombMarketTile = new List<GameObject>();
-
-
     [SerializeField]
     public struct AllCell
     {
@@ -56,24 +21,78 @@ public class GameManager : MonoBehaviour
             this.y = y;
             this.typeTile = typeTile;
             this.ob = ob;
-            //return typeTile;
         }
     }
-    List<AllCell> WormholeAllCell = new List<AllCell>();
-    List<AllCell> allBomb = new List<AllCell>();
-    List<AllCell> allBombMarked = new List<AllCell>();
+
+    public GameManagerReuse gameManagerReuse;
+    public GameObject aCell;
+    public List<Sprite> sprite = new List<Sprite>();
+
+    public Transform allCell;
+    public GameObject Floppy;
+    FloppyControll floppyControll;
+
+    public GameObject Flags;
     List<AllCell> FlagsAllCell = new List<AllCell>();
+
+    public GameObject Disappearing;
+    List<DisappearingTile> DisappearingObj = new List<DisappearingTile>();// dung cho Disappearing tile
+
+    public GameObject Wormhole;
+    List<AllCell> WormholeAllCell = new List<AllCell>();
+
+    List<Color> WormholeColor = new List<Color>();
+    List<float> WormholeSpeed= new List<float>();
+
+
+    public GameObject FlagChaningDoc;
+    public GameObject FlagChaningNgang;
+
+
+    public GameObject MovingTileSprite;
+    List<MovingTileGroup> movingTileGroups = new List<MovingTileGroup>();
     List<AllCell> MovingTilesAllCell = new List<AllCell>();
 
-   
+    public GameObject BombTileSprite;
+    List<AllCell> allBomb = new List<AllCell>();
+
+    public GameObject BombMarketSprite;
+    List<AllCell> allBombMarked = new List<AllCell>();
 
     [SerializeField] private AllCell[,] _allCells;
     [SerializeField] private AllCell floppyPosition = new AllCell(0,0,"0",null);
 
     public GameObject LevelSave;
-    void Start()
+    private void Start()
     {
         floppyControll = Floppy.GetComponent<FloppyControll>();
+       
+        CreateLevel();
+    }
+    public void ClearLevel()
+    {
+        FlagsAllCell.Clear();
+        DisappearingObj.Clear();
+        WormholeAllCell.Clear();
+        MovingTilesAllCell.Clear();
+        allBomb.Clear();
+        allBombMarked.Clear();
+        foreach(MovingTileGroup mtv in movingTileGroups)
+        {
+            mtv.ClearLevel();
+        }
+        floppyPosition = new AllCell(0, 0, "0", null);
+        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
+        floppyControll.ClearLevel();
+        allCell.gameObject.GetComponent<CellsManager>().ClearLevel();
+        GetComponent<CheckWinCondition>().flagList.Clear();
+    }
+    void CreateLevel()
+    {
+        floppyControll.SetUp();
+        movingTileGroups = new List<MovingTileGroup>(gameManagerReuse.movingTileGroups);
+        WormholeColor = new List<Color>(gameManagerReuse.WormholeColor);
+        WormholeSpeed = new List<float>(gameManagerReuse.WormholeSpeed);
         _allCells = new AllCell[5, 5];
         var cellsdata = LevelSave.GetComponent<AllCellDate>().cellsData;
         for (int i = 0; i < cellsdata.Count; i++)
@@ -111,8 +130,6 @@ public class GameManager : MonoBehaviour
                 {
                     var tileWormhole = tile.AddComponent<WormholeTile>();
                     tileWormhole.WormholeSprite = Wormhole;
-                   // tileWormhole.SetUP();
-                    WormholeObj.Add(_allCells[i, j].ob);
                     WormholeAllCell.Add(_allCells[i, j]);
                 }
                 else if (_allCells[i, j].typeTile == "40")
@@ -181,7 +198,7 @@ public class GameManager : MonoBehaviour
        
         
 
-        if (WormholeObj.Count != 0)
+        if (WormholeAllCell.Count != 0)
         {
             for(int i = 0;i < WormholeAllCell.Count; i++)
             {
@@ -380,6 +397,12 @@ public class GameManager : MonoBehaviour
         {
             OnSwipeBottom();
         }
+        if ((Input.GetKeyDown(KeyCode.H)))
+        {
+            ClearLevel();
+            CreateLevel();
+        }
+        //
     }
     [HideInInspector] public string swipeDirection;
     public void OnSwipeLeft() {
