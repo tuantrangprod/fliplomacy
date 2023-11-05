@@ -4,15 +4,19 @@ using UnityEngine;
 
 public class UI : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
+    public Vector3 startPos;
+    public Vector3 endPos;
 
-    // Update is called once per frame
-    void Update()
+    private void Start()
     {
-        
+        startPos = gameObject.transform.position;
+    }
+    public void MoveToEndPos()
+    {
+        StartCoroutine(1f.Tweeng((p) => gameObject.transform.position = p, startPos, endPos));
+    }
+    public void BackToStartPos()
+    {
+        StartCoroutine(1f.Tweeng((p) => gameObject.transform.position = p, endPos  ,startPos ));
     }
 }
