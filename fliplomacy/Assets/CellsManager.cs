@@ -10,6 +10,9 @@ public class CellsManager : MonoBehaviour
     public List<GameObject> otherObject;
     public List<GameObject> flagObject;
 
+    public UI backSelectLevelPanel;
+    public UI inGameButonPanel;
+
     public void setUp()
     {
         for (int i = 1; i < gameObject.transform.childCount; i++)
@@ -28,6 +31,8 @@ public class CellsManager : MonoBehaviour
            
         }
         DoStartAnim();
+        backSelectLevelPanel.TeleToEndPos();
+        inGameButonPanel.TeleToEndPos();
 
     }
     public void ClearLevel()
@@ -77,6 +82,8 @@ public class CellsManager : MonoBehaviour
         yield return new WaitForSeconds(time);
         floppy.StartIdelAnim();
         floppy.canswipe = true;
+        backSelectLevelPanel.BackToStartPos();
+        inGameButonPanel.BackToStartPos();
     }
     //public GameObject a;
     //public Transform ponitA;

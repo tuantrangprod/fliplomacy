@@ -27,20 +27,31 @@ public class Stage : MonoBehaviour
                 {
                     btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(true);
                 }
-                if (i == curentLevel)
+                else if (i == curentLevel)
                 {
-                    btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
-                    btnLevel[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
+
+                        btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
+                        btnLevel[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
+                        btnLevel[i].gameObject.transform.GetChild(0).gameObject.SetActive(true);     
                 }
+                
+                
             }
             else
             {
                 btnLevel[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
                 btnLevel[i].gameObject.transform.GetChild(3).gameObject.SetActive(true);
             }
+           
+        }
+        if (curentLevel > btnLevel.Count - 1)
+        {
+            btnLevel[btnLevel.Count - 1].gameObject.transform.GetChild(1).gameObject.SetActive(true);
+            btnLevel[btnLevel.Count - 1].gameObject.transform.GetChild(0).gameObject.SetActive(true);
+            curentLevel = btnLevel.Count - 1;
         }
 
-         //= GetComponentsInChildren<Button>();
+        //= GetComponentsInChildren<Button>();
     }
     public void btnClick()
     {
