@@ -6,6 +6,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 using TMPro;
+using Object = UnityEngine.Object;
 
 public class Stage : MonoBehaviour
 {
@@ -16,10 +17,13 @@ public class Stage : MonoBehaviour
     public List<Button> btnLevelUnLock = new List<Button>();
     public List<Button> btnLevelCanPick = new List<Button>();
 
-    public List<GameObject> level;
+    public List<Object> level;
+    
     GameObject currentBgBtn;
     [HideInInspector] public GameObject aStage;
     public bool canClick = true;
+
+    public int CurentSelect = -1;
     public void Start()
     {
         aStage = gameObject.transform.GetChild(0).gameObject;
@@ -49,6 +53,7 @@ public class Stage : MonoBehaviour
                 btnLevelUnLock.Add(btnLevel[i]);
             }
         }
+        btnLevelCanPick.Clear();
         for (int i = 0; i < btnLevelUnLock.Count; i++)
         {
 
@@ -67,9 +72,10 @@ public class Stage : MonoBehaviour
                 else if (i == curentLevel)
                 {
 
-                    
+                    CurentSelect = i;
                     btnLevelUnLock[i].gameObject.transform.GetChild(2).gameObject.SetActive(true);
-                    btnLevelUnLock[i].gameObject.transform.GetChild(0).gameObject.SetActive(true);
+                    currentBgBtn = btnLevelUnLock[i].gameObject.transform.GetChild(0).gameObject;
+                    currentBgBtn.gameObject.SetActive(true);
 
                     btnLevelUnLock[i].gameObject.transform.GetChild(1).gameObject.SetActive(false);
                     btnLevelUnLock[i].gameObject.transform.GetChild(3).gameObject.SetActive(false);
@@ -109,19 +115,28 @@ public class Stage : MonoBehaviour
         if (canClick)
         {
             GameObject ClickButtonName = EventSystem.current.currentSelectedGameObject;
-            foreach (Button btn in btnLevelCanPick)
+            for (int i = 0; i < btnLevelCanPick.Count; i++)
             {
-                if (btn.gameObject == ClickButtonName)
+                if (btnLevelCanPick[i].gameObject == ClickButtonName)
                 {
                     if (currentBgBtn != null)
                     {
                         currentBgBtn.gameObject.SetActive(false);
                     }
-                    currentBgBtn = btn.gameObject.transform.GetChild(0).gameObject;
+
+                    CurentSelect = i;
+                    currentBgBtn = btnLevelCanPick[i].gameObject.transform.GetChild(0).gameObject;
                     currentBgBtn.gameObject.SetActive(true);
                     break;
                 }
             }
+            // foreach (Button btn in btnLevelCanPick)
+            // {
+            //     if (btn.gameObject == ClickButtonName)
+            //     {
+            //        
+            //     }
+            // }
         }
        
     }

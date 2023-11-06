@@ -41,13 +41,19 @@ public class CheckWinCondition : MonoBehaviour
             WInAnim();
         }
     }
+
+    public StageManager StageManager;
+    
     void WInAnim()
     {
+        //var allcell = GetComponent<GameManager>().allCell;
         for (int i = 0; i < flagList.Count; i++)
         {
             flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
         }
-        //StartCoroutine(1f.Tweeng((p) => btnRePlay.transform.position = p, btnRePlay.transform.position, btnRePlay.transform.position + new Vector3(0, 700, 0),curve));
+
+        StageManager.UnlockNewLevel();
+        StageManager.LoadLevelData();
     }
     public void rePlayBtn()
     {

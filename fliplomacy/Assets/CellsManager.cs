@@ -1,7 +1,9 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Random = UnityEngine.Random;
 
 public class CellsManager : MonoBehaviour
 {
@@ -12,6 +14,12 @@ public class CellsManager : MonoBehaviour
 
     public UI backSelectLevelPanel;
     public UI inGameButonPanel;
+
+    public void Start()
+    {
+        backSelectLevelPanel.SetUp();
+        inGameButonPanel.SetUp();
+    }
 
     public void setUp()
     {
@@ -33,8 +41,7 @@ public class CellsManager : MonoBehaviour
         DoStartAnim();
         backSelectLevelPanel.gameObject.SetActive(true);
         inGameButonPanel.gameObject.SetActive(true);
-        backSelectLevelPanel.SetUp();
-        inGameButonPanel.SetUp();
+        
         backSelectLevelPanel.TeleToEndPos();
         inGameButonPanel.TeleToEndPos();
 
@@ -89,6 +96,19 @@ public class CellsManager : MonoBehaviour
         backSelectLevelPanel.BackToStartPos();
         inGameButonPanel.BackToStartPos();
     }
+
+    public GameManager GameManager;
+    public void CloseGameScene()
+    {
+        //StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localScale = p, gameObject.transform.localScale, new Vector3(0,0,0)));
+        //floppy.StopIdelAnim();
+        //floppy.ClearLevel();
+        //StartCoroutine(1f.Tweeng((p) => floppy.floopySprite.transform.localScale = p, floppy.floopySprite.transform.localScale, new Vector3(0,0,0)));
+        GameManager.ClearLevel();
+        backSelectLevelPanel.MoveToEndPos();
+        inGameButonPanel.MoveToEndPos();
+    }
+    
     //public GameObject a;
     //public Transform ponitA;
     //public Transform pointB;

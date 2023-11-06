@@ -63,4 +63,16 @@ public class UIManager : MonoBehaviour
         BackBtn.MoveToEndPos();
         StageManager.MoveToEndPos();
     }
+
+    public void LoadLevelScene()
+    {
+        StartCoroutine(WaitLoadLevelScene());
+    }
+    public IEnumerator WaitLoadLevelScene()
+    {
+        yield return new WaitForSeconds(1f);
+        PlayButton.BackToStartPos();
+        BackBtn.BackToStartPos();
+        StageManager.BackToStartPos();
+    }
 }

@@ -3,7 +3,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class GameManager : MonoBehaviour
 {
@@ -62,7 +64,7 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AllCell[,] _allCells;
     [SerializeField] private AllCell floppyPosition = new AllCell(0,0,"0",null);
 
-    public GameObject LevelSave;
+    public Object LevelSave;
     private void Start()
     {
         floppyControll = Floppy.GetComponent<FloppyControll>();
@@ -87,8 +89,10 @@ public class GameManager : MonoBehaviour
         allCell.gameObject.GetComponent<CellsManager>().ClearLevel();
         GetComponent<CheckWinCondition>().flagList.Clear();
     }
-    void CreateLevel()
+    public void CreateLevel()
     {
+        allCell.transform.localScale = new Vector3(1, 1, 1);
+        Floppy.transform.localScale = new Vector3(1, 1, 1);
         floppyControll.SetUp();
         movingTileGroups = new List<MovingTileGroup>(gameManagerReuse.movingTileGroups);
         WormholeColor = new List<Color>(gameManagerReuse.WormholeColor);

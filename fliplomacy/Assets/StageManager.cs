@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 public class StageManager : MonoBehaviour
 {
@@ -10,36 +13,33 @@ public class StageManager : MonoBehaviour
     public UIManager uiManager;
     public GameObject backStage;
     public GameObject nextStage;
-    public int levelUnlock = 0;
+    public string levelUnlock;
     public int CurrentStage = 0;
     public bool canBack = false;
     public bool canNext = true;
     public bool canClick = true;
     public float speedFlip;
+    public Object levelSelect;
     void Start()
     {
+        levelUnlock = PlayerPrefs.GetString("UnlockLevel");
+        try
+        {
+            var a  = Int32.Parse(levelUnlock[0].ToString());
+        }
+        catch
+        {
+            levelUnlock = "00";
+        }
         var temp = Resources.LoadAll("LevelDesign", typeof(GameObject));
         Level = temp.ToList();
         stages = GetComponentsInChildren<Stage>().ToList();
        
         checkCanBackOrNext();
-    }
-    void Update()
-    {
-        if (Input.GetKeyDown(KeyCode.K))
-        {
-            levelUnlock++;
-            LoadLevelData();
-        }
-       
-    }
-    void LoadLevelData()
-    {
+        LevelUnlock();
+        
         var sumLevelHavePrefab = Level.Count;
         var numberLevel = 0;
-
-        var sumlevelUnlock = levelUnlock;
-        var curentLevel = 0;
         for (int i = 0; i < stages.Count; i++)
         {
             if(sumLevelHavePrefab > 9)
@@ -53,20 +53,75 @@ public class StageManager : MonoBehaviour
                 sumLevelHavePrefab = 0;
             }
             stages[i].numberLevel = numberLevel;
-
-            if (levelUnlock > 9)
+            for (int j = 0; j < numberLevel; j++)
             {
-                curentLevel = 9;
-                sumlevelUnlock -= 9;
+                stages[i].level.Add(Level[0]);
+                Level.Remove(Level[0]);
+            }
+            stages[i].LoadLevel();
+        }
+
+        CheckHaveUnlock();
+    }
+    public int stageId;
+    public int stageLevelUnlock;
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            UnlockNewLevel();
+           
+            LoadLevelData();
+        }
+       
+    }
+
+    public void LevelUnlock()
+    {
+        stageId = Int32.Parse(levelUnlock[0].ToString());
+        try
+        {
+            stageLevelUnlock = Int32.Parse(levelUnlock[1].ToString()) * 10 + Int32.Parse(levelUnlock[2].ToString());
+        }
+        catch
+        {
+            stageLevelUnlock = Int32.Parse(levelUnlock[1].ToString()); 
+        }
+    }
+
+    public void UnlockNewLevel()
+    {
+        Debug.Log(1);
+        stageLevelUnlock++;
+        if (stageLevelUnlock >= stages[stageId].btnLevel.Count)
+        {
+            stageId++;
+            stageLevelUnlock = 0;
+            
+        }
+        levelUnlock = stageId.ToString() + stageLevelUnlock.ToString();
+        PlayerPrefs.SetString("UnlockLevel" ,levelUnlock);
+    }
+    public void LoadLevelData()
+    {
+        LevelUnlock();
+        for (int i = 0; i < stages.Count; i++)
+        {
+            if (i == stageId)
+            {
+                stages[i].curentLevel = stageLevelUnlock;
+            }
+            else if(i < stageId)
+            {
+                stages[i].curentLevel = stages[i].btnLevel.Count;
             }
             else
             {
-                curentLevel = sumlevelUnlock;
-                sumlevelUnlock = 0;
+                stages[i].curentLevel = -1;
             }
-            stages[i].curentLevel = curentLevel;
             stages[i].LoadLevel();
         }
+        
     }
 
     public void backStageCick()
@@ -166,6 +221,41 @@ public class StageManager : MonoBehaviour
             {
                 stages[i].aStage.gameObject.SetActive(false);
             }
+        }
+    }
+
+    public GameManager gameManager;
+    public bool UnlockIfWin = true;
+    public void LoadLevelToScene()
+    {
+        if (stages[CurrentStage].CurentSelect >= 0)
+        {
+            levelSelect = stages[CurrentStage].level[stages[CurrentStage].CurentSelect];
+            Debug.Log(stages[CurrentStage].level[stages[CurrentStage].CurentSelect].GetComponent<AllCellDate>());
+            gameManager.LevelSave = levelSelect;
+            gameManager.CreateLevel();
+            CheckHaveUnlock();
+            uiManager.ClickLoadGameBtn();
+
+        }
+    }
+
+    public void CheckHaveUnlock()
+    {
+        if (stageId == CurrentStage)
+        {
+            if (stageLevelUnlock == stages[CurrentStage].CurentSelect)
+            {
+                UnlockIfWin = true;
+            }
+            else
+            {
+                UnlockIfWin = false;
+            }
+        }
+        else
+        {
+            UnlockIfWin = false;
         }
     }
 }
