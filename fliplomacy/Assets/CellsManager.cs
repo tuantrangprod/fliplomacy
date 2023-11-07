@@ -60,19 +60,19 @@ public class CellsManager : MonoBehaviour
         {
 
             var cell = otherObject[i].AddComponent<aCellsManager>();
-            var time = Random.Range(0.5f, 2f);
+            var time = Random.Range(0.5f, 1f);
             cell.StartAnim(time, curve);
         }
         for (int i = 0; i < flagObject.Count; i++)
         {
 
             var cell = flagObject[i].AddComponent<aCellsManager>();
-            var time = Random.Range(2f, 3f);
+            var time = Random.Range(1f, 1.5f);
             cell.StartAnim(time, curve);
         }
         
         var fcell = floppy.floopySprite.AddComponent<aCellsManager>();
-        var ftime = Random.Range(2f, 3f);
+        var ftime = Random.Range(1f, 1.5f);
         fcell.StartAnim(ftime, curve);
         StartCoroutine(EndStartAnim(ftime + 0.2f));
 
@@ -83,6 +83,7 @@ public class CellsManager : MonoBehaviour
         uIManager.LoadInGameBtn();
         floppy.StartIdelAnim();
         floppy.canswipe = true;
+        floppy.floopySprite.transform.GetChild(0).gameObject.SetActive(true);
     }
 
     public GameManager GameManager;

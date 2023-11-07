@@ -457,8 +457,8 @@ public class GameManager : MonoBehaviour
         }
         if ((Input.GetKeyDown(KeyCode.H)))
         {
-            //ClearLevel();
-            //CreateLevel();
+            ClearLevel();
+            CreateLevel();
         }
         //
     }

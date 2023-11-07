@@ -106,32 +106,35 @@ public class SwipeDetector : MonoBehaviour
             {
                 if (canRescale)
                 {
-                    floppyControll.FloppyReScale();
+                    //floppyControll.FloppyReScale();
                     canRescale = false;
                 }
              
             }
         }
     }
-
+   
     private void OnSwipeLeft() {
         gameManager.OnSwipeLeft();
-        //floppyControll.JumpAnim();
+        floppyControll.swipeDirection = "Left";
 
     }
 
     private void OnSwipeRight() {
         gameManager.OnSwipeRight();
+        floppyControll.swipeDirection = "Right";
         //floppyControll.JumpAnim();
     }
 
     private void OnSwipeTop() {
         gameManager.OnSwipeTop();
+        floppyControll.swipeDirection = "Top";
         //floppyControll.JumpAnim();
     }
 
     private void OnSwipeBottom() {
         gameManager.OnSwipeBottom();
+        floppyControll.swipeDirection = "Bottom";
        // floppyControll.JumpAnim();
     }
 }

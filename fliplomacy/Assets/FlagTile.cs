@@ -22,17 +22,27 @@ public class FlagTile : MonoBehaviour
     }
     public void ChangeFlag(string swipeDirection)
     {
+        if (gameObject.transform.childCount == 1)
+        {
+            flag.transform.SetParent(gameObject.transform);
+        }
         if (swipeDirection == "Left" || swipeDirection == "Right")
         {
-            StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
-           flag.gameObject.transform.localEulerAngles,
-           flag.gameObject.transform.localEulerAngles + new Vector3(0, 180, 0)));
+           //  StartCoroutine(0.2f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
+           // flag.gameObject.transform.localEulerAngles,
+           // flag.gameObject.transform.localEulerAngles + new Vector3(0, 180, 0)));
+            StartCoroutine(0.2f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
+                gameObject.transform.localEulerAngles,
+                gameObject.transform.localEulerAngles + new Vector3(0, 360, 0)));
         }
         else
         {
-            StartCoroutine(0.1f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
-           flag.gameObject.transform.localEulerAngles,
-           flag.gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
+            StartCoroutine(0.2f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
+           gameObject.transform.localEulerAngles,
+           gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
+            // StartCoroutine(0.2f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
+            //     flag.gameObject.transform.localEulerAngles,
+            //     flag.gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
         }
 
 
@@ -81,6 +91,7 @@ public class FlagTile : MonoBehaviour
                color, 0.2f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
         gameObject.transform.position -= new Vector3(0, 0, 2);
         flag.transform.position -= new Vector3(0, 0, 2);
+        flag.transform.SetParent(gameObject.transform.parent);
         StartCoroutine(RoatateFlag(curve));
         StartCoroutine(SquareEffect(wave));
 
