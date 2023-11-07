@@ -13,6 +13,7 @@ public class CellsManager : MonoBehaviour
     public List<GameObject> flagObject;
 
     public UIManager uIManager;
+    public GameManager gameManager;
 
 
     public void setUp()
@@ -74,7 +75,7 @@ public class CellsManager : MonoBehaviour
         var fcell = floppy.floopySprite.AddComponent<aCellsManager>();
         var ftime = Random.Range(1f, 1.5f);
         fcell.StartAnim(ftime, curve);
-        StartCoroutine(EndStartAnim(ftime + 0.2f));
+        StartCoroutine(EndStartAnim(ftime + 0.05f));
 
     }
     IEnumerator EndStartAnim(float time)
@@ -84,9 +85,10 @@ public class CellsManager : MonoBehaviour
         floppy.StartIdelAnim();
         floppy.canswipe = true;
         floppy.floopySprite.transform.GetChild(0).gameObject.SetActive(true);
+        gameManager.FloppyMove();
+        
     }
 
-    public GameManager GameManager;
     //public void CloseGameScene()
     //{
     //    GameManager.ClearLevel();

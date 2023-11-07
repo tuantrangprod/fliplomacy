@@ -6,6 +6,7 @@ public class FlagChaningTile : MonoBehaviour
 {
     [HideInInspector] public FloppyControll floppy;
     [HideInInspector] public int flagChaningType = 0;
+
     public GameObject FlagChaningSprite;
     GameObject flagChaning;
     Vector3 eular1;
@@ -61,20 +62,16 @@ public class FlagChaningTile : MonoBehaviour
     }
     public void CheckDirectionWithFloppyFirstTime()
     {
-        Debug.Log("Lew lew");
         float distance = Vector2.Distance(gameObject.transform.position, floppy.gameObject.transform.position);
         if (distance == 1 || distance == 0)
         {
             rightdirection = true;
             flagChaning.transform.localEulerAngles = eular1;
-            Debug.Log("Lew lew 1");
-
         }
         else
         {
             rightdirection = false;
             flagChaning.transform.localEulerAngles = eular2;
-            Debug.Log("Lew lew 2");
         }
     }
     //private List<Observer> _observers = new List<Observer>();

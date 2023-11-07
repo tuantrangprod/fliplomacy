@@ -71,13 +71,13 @@ public class StageManager : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.K))
         {
-            UnlockNewLevel();
+            //UnlockNewLevel();
            
-            LoadLevelData();
+            //LoadLevelData();
         }
         if (Input.GetKeyDown(KeyCode.L))
         {
-            CheckHaveUnlock();
+           // CheckHaveUnlock();
         }
     }
 

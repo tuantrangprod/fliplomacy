@@ -33,7 +33,6 @@ public class FloppyControll : MonoBehaviour
         canswipe = false;
         floppyInWormHole = false;
         inMovingTile = false;
-        haveMovingTile = false;
         StopIdelAnim();
         if (floopySprite != null)
         {
@@ -114,6 +113,11 @@ public class FloppyControll : MonoBehaviour
     public void JumpAnim()
     {
         canswipe = false;
+        if (!floopySprite.transform.GetChild(0).gameObject.activeInHierarchy)
+        {
+            floopySprite.transform.GetChild(0).gameObject.SetActive(true);
+            Debug.Log("ShowTail");
+        }
         StartCoroutine(StartJump());
         
     }
@@ -139,13 +143,14 @@ public class FloppyControll : MonoBehaviour
             }
             else
             {
-                FloopySpriteMove(movingTilePos);
+                FloopySpriteMove(movingTilePos - new Vector3(0, 0, 2));
             }
 
             StartCoroutine(FloppySpriteEndJumpAnim(0.2f));
         }
         else
         {
+            floopySprite.transform.GetChild(0).gameObject.SetActive(false);
             FloopySpriteMove(new Vector3(wormholeStartPosX, wormholeStartPosY, floopySprite.transform.position.z));
             StartCoroutine(TeleportThroughWormholes());
         }
@@ -170,6 +175,7 @@ public class FloppyControll : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         floppyInWormHole = false;
         canswipe = true;
+        Debug.LogError("EndTeleport  set can Swipe true");
         floopySprite.transform.position = gameObject.transform.position - new Vector3(0, 0, 2);
         floopySprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
         Destroy(clone);
@@ -177,7 +183,6 @@ public class FloppyControll : MonoBehaviour
         EventEndJump();
     }
 
-    public bool haveMovingTile = false;
 
     [Obsolete]
     public void EffectWhenEndMove(float size, float lifetime, ParticleSystem.MinMaxCurve rotate)
@@ -205,15 +210,11 @@ public class FloppyControll : MonoBehaviour
         StartIdelAnim();
         if (!inMovingTile)
         {
-            
-            if (!haveMovingTile)
+            canswipe = true;
+            Debug.LogError("FloppySpriteEndJumpAnim  set can Swipe true");
+            if (!floppyInWormHole)
             {
-                canswipe = true;
                 EventEndJump();
-            }
-            else
-            {
-                StartCoroutine(WaitMovingTile());
             }
 
         }
@@ -260,6 +261,7 @@ public class FloppyControll : MonoBehaviour
     {
         yield return new WaitForSeconds(0.2f);
         canswipe = true;
+        Debug.LogError("WaitMovingTile  set can Swipe true");
         EventEndJump();
     }
 

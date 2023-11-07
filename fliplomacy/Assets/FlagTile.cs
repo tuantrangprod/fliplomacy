@@ -7,6 +7,7 @@ public class FlagTile : MonoBehaviour
 {
     [HideInInspector] public GameObject flagSprite;
     [HideInInspector] public int flagStatus = 0;
+    [HideInInspector] public AnimationCurve curve;
     //private Color _color1;
     private Color _color;
     private GameObject flag;
@@ -20,6 +21,7 @@ public class FlagTile : MonoBehaviour
         //     .color = _color;
 
     }
+    public  bool rotatingFlag = false;
     public void ChangeFlag(string swipeDirection)
     {
         if (gameObject.transform.childCount == 1)
@@ -28,27 +30,29 @@ public class FlagTile : MonoBehaviour
         }
         if (swipeDirection == "Left" || swipeDirection == "Right")
         {
-           //  StartCoroutine(0.2f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
-           // flag.gameObject.transform.localEulerAngles,
-           // flag.gameObject.transform.localEulerAngles + new Vector3(0, 180, 0)));
-            StartCoroutine(0.2f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
+            StartCoroutine(0.3f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
                 gameObject.transform.localEulerAngles,
-                gameObject.transform.localEulerAngles + new Vector3(0, 360, 0)));
+                gameObject.transform.localEulerAngles + new Vector3(0, 360, 0) , curve));
+            rotatingFlag = true;
+            StartCoroutine("StopRotatingFlag");
         }
         else
         {
-            StartCoroutine(0.2f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
+            StartCoroutine(0.3f.Tweeng((p) => gameObject.transform.localEulerAngles = p,
            gameObject.transform.localEulerAngles,
-           gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
-            // StartCoroutine(0.2f.Tweeng((p) => flag.gameObject.transform.localEulerAngles = p,
-            //     flag.gameObject.transform.localEulerAngles,
-            //     flag.gameObject.transform.localEulerAngles + new Vector3(360, 0, 0)));
+           gameObject.transform.localEulerAngles + new Vector3(360, 0, 0) , curve));
+            rotatingFlag = true;
+            StartCoroutine("StopRotatingFlag");
         }
-
 
         SetColor();
         TweenColor();
 
+    }
+    IEnumerator StopRotatingFlag()
+    {
+        yield return new WaitForSeconds(0.3f);
+        rotatingFlag = false;
     }
 
     public void SetColor()
@@ -81,24 +85,24 @@ public class FlagTile : MonoBehaviour
     }
     public void WinGameAnin(string key, Color color, AnimationCurve curve, GameObject wave)
     {
+        flag.transform.SetParent(gameObject.transform.parent);
         var flagbackgroundsprite = gameObject.transform.GetChild(0).gameObject;
         var spriteRenderer = flagbackgroundsprite.GetComponent<SpriteRenderer>();
         System.Action<ITween<Color>> updateColor = (t) =>
         {
-               spriteRenderer.color = t.CurrentValue;
+            spriteRenderer.color = t.CurrentValue;
         };
         flagbackgroundsprite.gameObject.Tween(key, spriteRenderer.color,
                color, 0.2f, TweenScaleFunctions.QuadraticEaseOut, updateColor);
         gameObject.transform.position -= new Vector3(0, 0, 2);
         flag.transform.position -= new Vector3(0, 0, 2);
-        flag.transform.SetParent(gameObject.transform.parent);
+
         StartCoroutine(RoatateFlag(curve));
         StartCoroutine(SquareEffect(wave));
-
     }
     IEnumerator RoatateFlag(AnimationCurve curve)
     {
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(0.3f);
         StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localEulerAngles = p, gameObject.transform.localEulerAngles + new Vector3(0, 0, 180), gameObject.transform.localEulerAngles));
         StartCoroutine(0.8f.Tweeng((p) => gameObject.transform.localScale = p, gameObject.transform.localScale, gameObject.transform.localScale*1.06f, curve));
     }

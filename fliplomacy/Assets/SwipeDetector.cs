@@ -29,7 +29,7 @@ public class SwipeDetector : MonoBehaviour
         floppyControll = gameObject.GetComponent<FloppyControll>();
     }
     bool canSwipe = false;
-    bool canRescale = false;
+    //bool canRescale = false;
 
     [System.Obsolete]
     void Update () {
@@ -94,21 +94,21 @@ public class SwipeDetector : MonoBehaviour
                 }
                 else
                 {
-                    canRescale = true;
+                   // canRescale = true;
                 }
             }
             else
             {
-                canRescale = true;
+               //canRescale = true;
             }
 
             if (Input.GetMouseButtonUp(0))
             {
-                if (canRescale)
-                {
-                    //floppyControll.FloppyReScale();
-                    canRescale = false;
-                }
+                //if (canRescale)
+                //{
+                //    //floppyControll.FloppyReScale();
+                //    canRescale = false;
+                //}
              
             }
         }

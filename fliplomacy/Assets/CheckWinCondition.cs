@@ -16,17 +16,16 @@ public class CheckWinCondition : MonoBehaviour
     void Start()
     {
         floppy = GetComponent<GameManager>().Floppy.GetComponent<FloppyControll>();
-        floppy.EndJump += WinCondition;
+      
 
     }
     public void RegisterEndJump()
     {
-        
+        floppy.EndJump += WinCondition;
     }
 
     void WinCondition()
     {
-        Debug.Log(123);
         int Condition = 0;
         for (int i = 0; i < flagList.Count; i++)
         {
@@ -37,25 +36,51 @@ public class CheckWinCondition : MonoBehaviour
         }
         if(Condition == flagList.Count)
         {
-            Debug.Log("Win");
-            floppy.canswipe = false;
-            WInAnim();
+            StartCoroutine("LockFloppySwipe");
+            WinAnim();
+            StageManager.UnlockNewLevel();
+            StageManager.LoadLevelData();
+
+            floppy.EndJump -= WinCondition;
         }
+    }
+    public IEnumerator LockFloppySwipe()
+    {
+        yield return new WaitForSeconds(0.05f);
+        floppy.canswipe = false;
     }
 
     public StageManager StageManager;
     
-    void WInAnim()
+    void WinAnim()
     {
-        //var allcell = GetComponent<GameManager>().allCell;
-        for (int i = 0; i < flagList.Count; i++)
+        StartCoroutine("WinGameAnimation");
+    }
+    public IEnumerator WinGameAnimation()
+    {
+        var w = true;
+        while (w)
         {
-            flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
-        }
-        uIManager.WinGame();
+            int Condition = 0; 
+            for (int i = 0; i < flagList.Count; i++)
+            {
+                if (!flagList[i].rotatingFlag)
+                {
+                    Condition++;
+                }
+            }
+            if (Condition == flagList.Count)
+            {
+                for (int i = 0; i < flagList.Count; i++)
+                {
+                    flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
+                }
+                uIManager.WinGame();
+                w = false;
+            }
 
-        StageManager.UnlockNewLevel();
-        StageManager.LoadLevelData();
+            yield return null;
+        }
     }
     public void rePlayBtn()
     {

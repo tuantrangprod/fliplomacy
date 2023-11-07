@@ -35,6 +35,7 @@ public class GameManager : MonoBehaviour
     FloppyControll floppyControll;
 
     public GameObject Flags;
+    public AnimationCurve flagscurve;
     List<AllCell> FlagsAllCell = new List<AllCell>();
 
     public GameObject Disappearing;
@@ -175,6 +176,7 @@ public class GameManager : MonoBehaviour
                     var tileFlag = tile.AddComponent<FlagTile>();
                     GetComponent<CheckWinCondition>().flagList.Add(tileFlag);
                     tileFlag.flagSprite = Flags;
+                    tileFlag.curve = flagscurve;
                     tileFlag.SetUP();
                     FlagsAllCell.Add(_allCells[i, j]);
                 }
@@ -342,7 +344,7 @@ public class GameManager : MonoBehaviour
         movingTileGroups = new List<MovingTileGroup>(listOut);
         if(movingTileGroups.Count > 0)
         {
-            floppyControll.haveMovingTile = true;
+            //floppyControll.haveMovingTile = true;
         }
 
         if (allBombMarked.Count != 0)
@@ -363,7 +365,7 @@ public class GameManager : MonoBehaviour
         }
 
         allCell.gameObject.GetComponent<CellsManager>().setUp();
-        //GetComponent<CheckWinCondition>().RegisterEndJump();
+        GetComponent<CheckWinCondition>().RegisterEndJump();
     }
     public void MovingtileGroup()
     {
@@ -394,10 +396,21 @@ public class GameManager : MonoBehaviour
             }
         }
     }
+    public bool FloppyInMovingTileGroup = false;
     public IEnumerator WaitFloppyEndJump(MovingTileGroup mvt)
     {
-        yield return new WaitForSeconds(0.2f);
+        float time = 0;
+        if (FloppyInMovingTileGroup)
+        {
+            time = 0.2f;
+        }
+        else
+        {
+            time = 0;
+        }
+        yield return new WaitForSeconds(time);
         mvt.MovingTileTravel();
+        FloppyInMovingTileGroup = false;
     }
     public void MovingtileGroupAfterJump()
     {
@@ -524,6 +537,32 @@ public class GameManager : MonoBehaviour
             {
                 FloppyJump(nextX, nextY);
             }
+            if(_allCells[floppyPosition.x, floppyPosition.y].typeTile[0] == '3')
+            {
+                FloppyInMovingTileGroup = true;
+            }
+        }
+
+    }
+    public void FloppyMove()
+    {
+
+        if (_allCells[floppyPosition.x, floppyPosition.y].typeTile == 2.ToString()) //Disappearing
+        {
+            DisappearingCheckOnIt();
+        }
+        else if (_allCells[floppyPosition.x, floppyPosition.y].typeTile[0] == '6') // BombTile
+        {
+            BombTileCheckOnIt();
+        }
+        else if (_allCells[floppyPosition.x, floppyPosition.y].typeTile == 40.ToString()) // Change flag theo chieu doc
+        {
+            FlagChangeTileCheckOnIt("Top");
+        }
+        else if (_allCells[floppyPosition.x, floppyPosition.y].typeTile == 41.ToString()) // Change flag theo chieu ngang
+        {
+            FlagChangeTileCheckOnIt("Left");
+
         }
 
     }
@@ -562,6 +601,7 @@ public class GameManager : MonoBehaviour
                 {
                     inMoving = true;
                     floppyControll.inMovingTile = true;
+                    FloppyInMovingTileGroup = true;
                     mtg = movingTileGroups[i];
                     floppyControll.movingTilePos = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, 0);
                 }
@@ -575,6 +615,7 @@ public class GameManager : MonoBehaviour
             }
         }
         floppyControll.JumpAnim();
+        
     }
     public void FlagTileFunction(int nextX, int nextY, List<GameObject> flagsInStep,
         int x, int y, int startFloppyPositionx, int startFloppyPositiony)
@@ -663,11 +704,24 @@ public class GameManager : MonoBehaviour
         Debug.Log("DisappearingOnTriger");
         DisappearingObj.Add(disappearingTileFunc);
     }
+    public void DisappearingCheckOnIt()
+    {
+        _allCells[floppyPosition.x, floppyPosition.y].typeTile = 20.ToString();
+        var disappearingTileFunc = _allCells[floppyPosition.x, floppyPosition.y].ob.GetComponent<DisappearingTile>();
+        disappearingTileFunc.HaveObjectOn();
+        Debug.Log("DisappearingOnTriger");
+        DisappearingObj.Add(disappearingTileFunc);
+    }
     public void BombTileCheckOnIt(int nextX, int nextY)
     {
         FloppyJump(nextX, nextY);
         StartCoroutine(WaitEndJumpToDoBombFunc(nextX, nextY));
         
+    }
+    public void BombTileCheckOnIt()
+    {
+        StartCoroutine(WaitEndJumpToDoBombFunc(floppyPosition.x, floppyPosition.y));
+
     }
     public IEnumerator WaitEndJumpToDoBombFunc(int nextX, int nextY)
     {
@@ -686,7 +740,10 @@ public class GameManager : MonoBehaviour
     {
         FloppyJump(nextX, nextY);
         StartCoroutine(WaitEndJumpToDoFlagChangeFunc(nextX,nextY,direction));
-       
+    }
+    public void FlagChangeTileCheckOnIt( string direction)
+    {
+        StartCoroutine(WaitEndJumpToDoFlagChangeFunc(floppyPosition.x, floppyPosition.y, direction));
     }
     public IEnumerator WaitEndJumpToDoFlagChangeFunc(int nextX, int nextY, string direction)
     {

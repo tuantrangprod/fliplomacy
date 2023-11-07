@@ -8553,14 +8553,14 @@ MonoBehaviour:
       inWeight: 0
       outWeight: 0
     - serializedVersion: 3
-      time: 0.27612156
-      value: 0.76136774
-      inSlope: 0.53073347
-      outSlope: 0.53073347
+      time: 0.4000532
+      value: 0.75429225
+      inSlope: 0.82341075
+      outSlope: 0.82341075
       tangentMode: 0
       weightedMode: 0
       inWeight: 0.5925708
-      outWeight: 0.20566775
+      outWeight: 0.11150497
     - serializedVersion: 3
       time: 1
       value: 1
@@ -8577,7 +8577,7 @@ MonoBehaviour:
   otherObject: []
   flagObject: []
   uIManager: {fileID: 1857244243}
-  GameManager: {fileID: 2072723659}
+  gameManager: {fileID: 2072723659}
 --- !u!212 &1130442026
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -14278,6 +14278,39 @@ MonoBehaviour:
   allCell: {fileID: 1130442024}
   Floppy: {fileID: 656712785}
   Flags: {fileID: 3892974698840460694, guid: 28f1140a0c50249d3a9e384a1cb085ce, type: 3}
+  flagscurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 2
+      outSlope: 2
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 0.4291998
+      value: 0.8425128
+      inSlope: 0.591669
+      outSlope: 0.591669
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0.17855488
+      outWeight: 0.3094839
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
   Disappearing: {fileID: 3892974698840460694, guid: a79089deea41f2b448b1923570cb4fbf, type: 3}
   Wormhole: {fileID: 3892974698840460694, guid: 203974454b5704841a5e7f70235f34eb, type: 3}
   FlagChaningDoc: {fileID: 7383250285292744003, guid: 881daf0d02f5cb54f9334b9150c0ee9e, type: 3}
@@ -14286,6 +14319,7 @@ MonoBehaviour:
   BombTileSprite: {fileID: 4942824742176450609, guid: 69699de9e5c54d04191abca60a4e5a1a, type: 3}
   BombMarketSprite: {fileID: 1605804346396855002, guid: ac47f150a0647ba44aaf6f03a5ead0cc, type: 3}
   LevelSave: {fileID: 6934380818517495332, guid: cb80269bd98df46e49c7a924f8d6a856, type: 3}
+  FloppyInMovingTileGroup: 0
   swipeDirection: 
 --- !u!4 &2072723660
 Transform:
