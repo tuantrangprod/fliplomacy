@@ -12,6 +12,7 @@ public class CheckWinCondition : MonoBehaviour
     public Color color;
     public AnimationCurve curve;
     public GameObject squareWave;
+    public UIManager uIManager;
     void Start()
     {
         floppy = GetComponent<GameManager>().Floppy.GetComponent<FloppyControll>();
@@ -51,6 +52,7 @@ public class CheckWinCondition : MonoBehaviour
         {
             flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
         }
+        uIManager.WinGame();
 
         StageManager.UnlockNewLevel();
         StageManager.LoadLevelData();

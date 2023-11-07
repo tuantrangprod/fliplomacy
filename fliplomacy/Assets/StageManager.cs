@@ -25,12 +25,14 @@ public class StageManager : MonoBehaviour
         levelUnlock = PlayerPrefs.GetString("UnlockLevel");
         try
         {
-            var a  = Int32.Parse(levelUnlock[0].ToString());
+            var a = Int32.Parse(levelUnlock[0].ToString());
         }
         catch
         {
             levelUnlock = "00";
         }
+        //levelUnlock = "00";
+        //PlayerPrefs.SetString("UnlockLevel", levelUnlock);
         var temp = Resources.LoadAll("LevelDesign", typeof(GameObject));
         Level = temp.ToList();
         stages = GetComponentsInChildren<Stage>().ToList();
@@ -73,7 +75,10 @@ public class StageManager : MonoBehaviour
            
             LoadLevelData();
         }
-       
+        if (Input.GetKeyDown(KeyCode.L))
+        {
+            CheckHaveUnlock();
+        }
     }
 
     public void LevelUnlock()
@@ -91,16 +96,20 @@ public class StageManager : MonoBehaviour
 
     public void UnlockNewLevel()
     {
-        Debug.Log(1);
-        stageLevelUnlock++;
-        if (stageLevelUnlock >= stages[stageId].btnLevel.Count)
+        if (UnlockIfWin)
         {
-            stageId++;
-            stageLevelUnlock = 0;
-            
+            stageLevelUnlock++;
+            if (stageLevelUnlock >= stages[stageId].btnLevel.Count)
+            {
+                stageId++;
+                stageLevelUnlock = 0;
+
+            }
+            levelUnlock = stageId.ToString() + stageLevelUnlock.ToString();
+            PlayerPrefs.SetString("UnlockLevel", levelUnlock);
         }
-        levelUnlock = stageId.ToString() + stageLevelUnlock.ToString();
-        PlayerPrefs.SetString("UnlockLevel" ,levelUnlock);
+      
+
     }
     public void LoadLevelData()
     {
@@ -244,6 +253,8 @@ public class StageManager : MonoBehaviour
     {
         if (stageId == CurrentStage)
         {
+            Debug.Log("WInCanUnLock" + "  "+ stageLevelUnlock + "  "+ stages[CurrentStage].CurentSelect);
+            
             if (stageLevelUnlock == stages[CurrentStage].CurentSelect)
             {
                 UnlockIfWin = true;

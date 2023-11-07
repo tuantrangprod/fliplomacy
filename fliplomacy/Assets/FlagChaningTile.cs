@@ -30,6 +30,10 @@ public class FlagChaningTile : MonoBehaviour
         CheckDirectionWithFloppyFirstTime();
         
     }
+    public void OnDestroy()
+    {
+        floppy.EndJump -= OnThingHappened;
+    }
     bool rightdirection = false;
     void OnThingHappened()
     {

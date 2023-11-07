@@ -12,14 +12,8 @@ public class CellsManager : MonoBehaviour
     public List<GameObject> otherObject;
     public List<GameObject> flagObject;
 
-    public UI backSelectLevelPanel;
-    public UI inGameButonPanel;
+    public UIManager uIManager;
 
-    public void Start()
-    {
-        backSelectLevelPanel.SetUp();
-        inGameButonPanel.SetUp();
-    }
 
     public void setUp()
     {
@@ -39,12 +33,7 @@ public class CellsManager : MonoBehaviour
            
         }
         DoStartAnim();
-        backSelectLevelPanel.gameObject.SetActive(true);
-        inGameButonPanel.gameObject.SetActive(true);
         
-        backSelectLevelPanel.TeleToEndPos();
-        inGameButonPanel.TeleToEndPos();
-
     }
     public void ClearLevel()
     {
@@ -91,23 +80,16 @@ public class CellsManager : MonoBehaviour
     IEnumerator EndStartAnim(float time)
     {
         yield return new WaitForSeconds(time);
+        uIManager.LoadInGameBtn();
         floppy.StartIdelAnim();
         floppy.canswipe = true;
-        backSelectLevelPanel.BackToStartPos();
-        inGameButonPanel.BackToStartPos();
     }
 
     public GameManager GameManager;
-    public void CloseGameScene()
-    {
-        //StartCoroutine(0.5f.Tweeng((p) => gameObject.transform.localScale = p, gameObject.transform.localScale, new Vector3(0,0,0)));
-        //floppy.StopIdelAnim();
-        //floppy.ClearLevel();
-        //StartCoroutine(1f.Tweeng((p) => floppy.floopySprite.transform.localScale = p, floppy.floopySprite.transform.localScale, new Vector3(0,0,0)));
-        GameManager.ClearLevel();
-        backSelectLevelPanel.MoveToEndPos();
-        inGameButonPanel.MoveToEndPos();
-    }
+    //public void CloseGameScene()
+    //{
+    //    GameManager.ClearLevel();
+    //}
     
     //public GameObject a;
     //public Transform ponitA;

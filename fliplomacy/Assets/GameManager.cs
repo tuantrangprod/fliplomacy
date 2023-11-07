@@ -71,6 +71,60 @@ public class GameManager : MonoBehaviour
        
         //CreateLevel();
     }
+    public void ClearLevelHaveAnim()
+    {
+        FlagsAllCell.Clear();
+        DisappearingObj.Clear();
+        WormholeAllCell.Clear();
+        MovingTilesAllCell.Clear();
+        allBomb.Clear();
+        allBombMarked.Clear();
+        foreach (MovingTileGroup mtv in movingTileGroups)
+        {
+            mtv.ClearLevel();
+        }
+        floppyControll.StopAllAnim();
+        StartCoroutine(0.5f.Tweeng((p) => allCell.localScale = p, allCell.localScale, new Vector3(0, 0, 0)));
+        StartCoroutine(ClearLevelHaveAnim1());
+    }
+    public IEnumerator ClearLevelHaveAnim1()
+    {
+        yield return new WaitForSeconds(0.5f);
+        floppyPosition = new AllCell(0, 0, "0", null);
+        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
+        floppyControll.ClearLevel();
+        allCell.gameObject.GetComponent<CellsManager>().ClearLevel();
+        GetComponent<CheckWinCondition>().flagList.Clear();
+
+    }
+
+    public void ClearLevelAndReloadSceneHaveAnim()
+    {
+        FlagsAllCell.Clear();
+        DisappearingObj.Clear();
+        WormholeAllCell.Clear();
+        MovingTilesAllCell.Clear();
+        allBomb.Clear();
+        allBombMarked.Clear();
+        foreach (MovingTileGroup mtv in movingTileGroups)
+        {
+            mtv.ClearLevel();
+        }
+        floppyControll.StopAllAnim();
+        StartCoroutine(0.5f.Tweeng((p) => allCell.localScale = p, allCell.localScale, new Vector3(0, 0, 0)));
+        StartCoroutine(ClearLevelAndReloadSceneHaveAnim1());
+    }
+    public IEnumerator ClearLevelAndReloadSceneHaveAnim1()
+    {
+        yield return new WaitForSeconds(0.5f);
+        floppyPosition = new AllCell(0, 0, "0", null);
+        Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
+        floppyControll.ClearLevel();
+        allCell.gameObject.GetComponent<CellsManager>().ClearLevel();
+        GetComponent<CheckWinCondition>().flagList.Clear();
+        CreateLevel();
+
+    }
     public void ClearLevel()
     {
         FlagsAllCell.Clear();
@@ -403,8 +457,8 @@ public class GameManager : MonoBehaviour
         }
         if ((Input.GetKeyDown(KeyCode.H)))
         {
-            ClearLevel();
-            CreateLevel();
+            //ClearLevel();
+            //CreateLevel();
         }
         //
     }

@@ -239,6 +239,15 @@ public class FloppyControll : MonoBehaviour
         floppyScale = TweengScale(time, floopySprite.transform.localScale, scale);
         StartCoroutine(floppyScale);
     }
+    public void StopAllAnim()
+    {
+        floopySprite.gameObject.SetActive(false);
+        var sprite = gameObject.transform.GetChild(0).gameObject;
+        sprite.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+        var clone =Instantiate(sprite, new Vector3(gameObject.transform.position.x, gameObject.transform.position.y, -2), quaternion.identity);
+        clone.gameObject.SetActive(true);
+        StartCoroutine(0.5f.Tweeng((p) => clone.transform.localScale = p, clone.transform.localScale, new Vector3(0, 0, 0)));
+    }
     public IEnumerator TweengScale(float duration, Vector3 aa, Vector3 zz)
     {
         float sT = Time.time;
