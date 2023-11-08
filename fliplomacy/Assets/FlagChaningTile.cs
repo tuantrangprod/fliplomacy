@@ -7,6 +7,8 @@ public class FlagChaningTile : MonoBehaviour
     [HideInInspector] public FloppyControll floppy;
     [HideInInspector] public int flagChaningType = 0;
 
+    public List<FlagTile> flagTiles = new List<FlagTile>();
+    public string direction;
     public GameObject FlagChaningSprite;
     GameObject flagChaning;
     Vector3 eular1;
@@ -73,6 +75,48 @@ public class FlagChaningTile : MonoBehaviour
             rightdirection = false;
             flagChaning.transform.localEulerAngles = eular2;
         }
+    }
+
+    public void ChangeFlag()
+    {
+        StartCoroutine(ChangeFlag(0.3f));
+    }
+    public IEnumerator ChangeFlag(float time)
+    {
+        var w = true;
+        while (w)
+        {
+            int Condition = 0; 
+            for (int i = 0; i < flagTiles.Count; i++)
+            {
+                if (!flagTiles[i].rotatingFlag)
+                {
+                    Condition++;
+                }
+            }
+            if (Condition == flagTiles.Count)
+            {
+                for (int i = 0; i < flagTiles.Count; i++)
+                {
+                    flagTiles[i].ChangeFlag(direction);
+                }
+
+                StartCoroutine(FloppyReCanSwipe(time));
+                w = false;
+            }
+            else
+            {
+                floppy.canswipe = false;
+            }
+
+            yield return null;
+        }
+    }
+
+    public IEnumerator FloppyReCanSwipe(float time)
+    {
+        yield return new WaitForSeconds(time);
+        floppy.canswipe = true;
     }
     //private List<Observer> _observers = new List<Observer>();
 

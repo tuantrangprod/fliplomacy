@@ -33,6 +33,7 @@ public class FloppyControll : MonoBehaviour
         canswipe = false;
         floppyInWormHole = false;
         inMovingTile = false;
+        stillInMovingTile = false;
         StopIdelAnim();
         if (floopySprite != null)
         {
@@ -202,6 +203,8 @@ public class FloppyControll : MonoBehaviour
     {
         EndJump?.Invoke();
     }
+
+    public bool stillInMovingTile = false;
     [Obsolete]
     IEnumerator FloppySpriteEndJumpAnim(float time)
     {
@@ -221,7 +224,13 @@ public class FloppyControll : MonoBehaviour
         else
         {
             FloopySpriteMove(gameObject.transform.position - new Vector3(0, 0, 2));
+            StartCoroutine(WaitMovingTileEnd());
 
+            StartCoroutine(WaitMovingTile());
+        }
+
+        if (stillInMovingTile)
+        {
             StartCoroutine(WaitMovingTileEnd());
 
             StartCoroutine(WaitMovingTile());
@@ -270,6 +279,7 @@ public class FloppyControll : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         StartIdelAnim();
         inMovingTile = false;
+        stillInMovingTile = false;
     }
     void FloopySpriteMove(Vector3 pos)
     {

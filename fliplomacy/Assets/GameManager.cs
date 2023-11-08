@@ -49,12 +49,15 @@ public class GameManager : MonoBehaviour
 
 
     public GameObject FlagChaningDoc;
+    List<AllCell> FlagChaningDocAllCells = new List<AllCell>();
     public GameObject FlagChaningNgang;
+    List<AllCell> FlagChaningNgangAllCells = new List<AllCell>();
 
 
     public GameObject MovingTileSprite;
     List<MovingTileGroup> movingTileGroups = new List<MovingTileGroup>();
     List<AllCell> MovingTilesAllCell = new List<AllCell>();
+    public AnimationCurve movingTileGroupsCurve;
 
     public GameObject BombTileSprite;
     List<AllCell> allBomb = new List<AllCell>();
@@ -76,6 +79,8 @@ public class GameManager : MonoBehaviour
     {
         FlagsAllCell.Clear();
         DisappearingObj.Clear();
+        FlagChaningDocAllCells.Clear();
+        FlagChaningNgangAllCells.Clear();
         WormholeAllCell.Clear();
         MovingTilesAllCell.Clear();
         allBomb.Clear();
@@ -103,6 +108,8 @@ public class GameManager : MonoBehaviour
     {
         FlagsAllCell.Clear();
         DisappearingObj.Clear();
+        FlagChaningDocAllCells.Clear();
+        FlagChaningNgangAllCells.Clear();
         WormholeAllCell.Clear();
         MovingTilesAllCell.Clear();
         allBomb.Clear();
@@ -130,6 +137,8 @@ public class GameManager : MonoBehaviour
     {
         FlagsAllCell.Clear();
         DisappearingObj.Clear();
+        FlagChaningDocAllCells.Clear();
+        FlagChaningNgangAllCells.Clear();
         WormholeAllCell.Clear();
         MovingTilesAllCell.Clear();
         allBomb.Clear();
@@ -199,6 +208,8 @@ public class GameManager : MonoBehaviour
                     tileFlagChaning.flagChaningType = 1;
                     tileFlagChaning.floppy = floppyControll;
                     tileFlagChaning.SetUP();
+                    tileFlagChaning.direction = "Top";
+                    FlagChaningDocAllCells.Add(_allCells[i, j]);
                     
                     //FlagChaningDocObj.Add(_allCells[i, j].ob);
                 }
@@ -208,7 +219,9 @@ public class GameManager : MonoBehaviour
                     tileFlagChaning.FlagChaningSprite = FlagChaningNgang;
                     tileFlagChaning.flagChaningType = 2;
                     tileFlagChaning.floppy = floppyControll;
+                    tileFlagChaning.direction = "Left";
                     tileFlagChaning.SetUP();
+                    FlagChaningNgangAllCells.Add(_allCells[i, j]);
                     
                     //FlagChaningNgangObj.Add(_allCells[i, j].ob);
                 }
@@ -255,7 +268,39 @@ public class GameManager : MonoBehaviour
 
             }
         }
-       
+
+        if (FlagChaningDocAllCells.Count != 0)
+        {
+            for (int j = 0; j < FlagChaningDocAllCells.Count; j++)
+            {
+                for (int i = 0; i < FlagsAllCell.Count; i++)
+                {
+                    if (FlagsAllCell[i].x == _allCells[FlagChaningDocAllCells[j].x, FlagChaningDocAllCells[j].y].x)
+                    {
+                        FlagChaningDocAllCells[j].ob.GetComponent<FlagChaningTile>().flagTiles
+                            .Add(FlagsAllCell[i].ob.GetComponent<FlagTile>());
+                        //FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
+                    }
+                }
+            }
+            
+        }
+        if (FlagChaningNgangAllCells.Count != 0)
+        {
+            for (int j = 0; j < FlagChaningNgangAllCells.Count; j++)
+            {
+                for (int i = 0; i < FlagsAllCell.Count; i++)
+                {
+                    if (FlagsAllCell[i].y == _allCells[FlagChaningNgangAllCells[j].x, FlagChaningNgangAllCells[j].y].y)
+                    {
+                        FlagChaningNgangAllCells[j].ob.GetComponent<FlagChaningTile>().flagTiles
+                            .Add(FlagsAllCell[i].ob.GetComponent<FlagTile>());
+                        //FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
+                    }
+                }
+            }
+            
+        }
         
 
         if (WormholeAllCell.Count != 0)
@@ -305,6 +350,7 @@ public class GameManager : MonoBehaviour
                 movingTileGroups[movingTileID].arrayTile[movingTileStt] = MovingTilesAllCell[i].ob;
                 movingTileGroups[movingTileID].CurrentStep = Int32.Parse(MovingTilesAllCell[i].typeTile[2].ToString());
                 movingTileGroups[movingTileID].UporBack = Int32.Parse(MovingTilesAllCell[i].typeTile[3].ToString());
+                movingTileGroups[movingTileID].Curve = movingTileGroupsCurve;
 
 
             }
@@ -505,6 +551,12 @@ public class GameManager : MonoBehaviour
 
         if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)// && _allCells[nextX, nextY].typeTile != 20)
         {
+            if(_allCells[floppyPosition.x, floppyPosition.y].typeTile[0] == '5')
+            {
+                FloppyInMovingTileGroup = true;
+                floppyControll.stillInMovingTile = true;
+                Debug.LogError(" FloppyInMovingTileGroup = true");
+            }
             if (_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
             {
                 FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.y);
@@ -537,10 +589,7 @@ public class GameManager : MonoBehaviour
             {
                 FloppyJump(nextX, nextY);
             }
-            if(_allCells[floppyPosition.x, floppyPosition.y].typeTile[0] == '3')
-            {
-                FloppyInMovingTileGroup = true;
-            }
+            
         }
 
     }
@@ -569,6 +618,7 @@ public class GameManager : MonoBehaviour
 
     public void FloppyJump(int nextX, int nextY)
     {
+        Debug.LogWarning("MovingtileGroupAfterJump");
         floppyPosition.x = nextX;
         floppyPosition.y = nextY;
         Floppy.transform.position = new Vector3(floppyPosition.x, floppyPosition.y, -1);
@@ -607,6 +657,7 @@ public class GameManager : MonoBehaviour
                 }
             }
             MovingtileGroupAfterJump();
+           
             if (inMoving)
             {
                 Floppy.transform.position = new Vector3(mtg.arrayTile[mtg.CurrentStep].transform.position.x, mtg.arrayTile[mtg.CurrentStep].transform.position.y, -1);
@@ -646,19 +697,19 @@ public class GameManager : MonoBehaviour
                     }
                     if (_allCells[nextX, nextY].typeTile == 2.ToString())
                     {
-                        DisappearingCheckOnIt(nextX, nextY);
+                        DisappearingCheckOnIt();
                     }
                     else if (_allCells[nextX, nextY].typeTile[0] == '6') // BombTile
                     {
-                        BombTileCheckOnIt(nextX, nextY);
+                        BombTileCheckOnIt();
                     }
                     else if (_allCells[nextX, nextY].typeTile == 40.ToString()) // Change flag theo chieu doc
                     {
-                        FlagChangeTileCheckOnIt(nextX, nextY, "Top");
+                        FlagChangeTileCheckOnIt( "Top");
                     }
                     else if (_allCells[nextX, nextY].typeTile == 41.ToString()) // Change flag theo chieu ngang
                     {
-                        FlagChangeTileCheckOnIt(nextX, nextY, "Left");
+                        FlagChangeTileCheckOnIt( "Left");
 
                     }
                 }
@@ -748,27 +799,54 @@ public class GameManager : MonoBehaviour
     public IEnumerator WaitEndJumpToDoFlagChangeFunc(int nextX, int nextY, string direction)
     {
         yield return new WaitForSeconds(0.19f);
-        if (direction == "Top")
-        {
-            for (int i = 0; i < FlagsAllCell.Count; i++)
-            {
-                if (FlagsAllCell[i].x == _allCells[nextX, nextY].x)
-                {
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
-                }
-            }
-        }
-        else if (direction == "Left")
-        {
-            for (int i = 0; i < FlagsAllCell.Count; i++)
-            {
-                if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
-                {
-                    FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Left");
-                }
-            }
-        }
+        _allCells[nextX, nextY].ob.GetComponent<FlagChaningTile>().ChangeFlag();
+        // if (direction == "Top")
+        // {
+        //     for (int i = 0; i < FlagsAllCell.Count; i++)
+        //     {
+        //         if (FlagsAllCell[i].x == _allCells[nextX, nextY].x)
+        //         {
+        //             FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Top");
+        //         }
+        //     }
+        // }
+        // else if (direction == "Left")
+        // {
+        //     for (int i = 0; i < FlagsAllCell.Count; i++)
+        //     {
+        //         if (FlagsAllCell[i].y == _allCells[nextX, nextY].y)
+        //         {
+        //             FlagsAllCell[i].ob.GetComponent<FlagTile>().ChangeFlag("Left");
+        //         }
+        //     }
+        // }
     }
+    // public IEnumerator FlagChangGameAnimation()
+    // {
+    //     var w = true;
+    //     while (w)
+    //     {
+    //         int Condition = 0; 
+    //         for (int i = 0; i < flagList.Count; i++)
+    //         {
+    //             if (!flagList[i].rotatingFlag)
+    //             {
+    //                 Condition++;
+    //             }
+    //         }
+    //         if (Condition == flagList.Count)
+    //         {
+    //             for (int i = 0; i < flagList.Count; i++)
+    //             {
+    //                 flagList[i].WinGameAnin("WinGameAnin" + i, color, curve, squareWave);
+    //             }
+    //             uIManager.WinGame();
+    //             w = false;
+    //         }
+    //
+    //         yield return null;
+    //     }
+    // }
 
 
 

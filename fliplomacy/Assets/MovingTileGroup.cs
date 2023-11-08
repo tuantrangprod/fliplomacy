@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class MovingTileGroup : MonoBehaviour
 {
+    public AnimationCurve Curve;
     public GameObject MovingTileSprite;
     public List<GameObject> allMovingTile = new List<GameObject>();
     public GameObject[] arrayTile = new GameObject[5];
@@ -33,7 +34,7 @@ public class MovingTileGroup : MonoBehaviour
     {
         StartCoroutine(0.2f.Tweeng((p) => movingTile.transform.position = p,
           movingTile.transform.position,
-           arrayTile[CurrentStep].transform.position));
+           arrayTile[CurrentStep].transform.position,Curve));
     }
     public void ClearLevel()
     {
