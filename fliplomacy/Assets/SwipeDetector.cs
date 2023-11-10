@@ -28,12 +28,13 @@ public class SwipeDetector : MonoBehaviour
     {
         floppyControll = gameObject.GetComponent<FloppyControll>();
     }
-    bool canSwipe = false;
+    private bool canSwipe = false;
     //bool canRescale = false;
-
+    
     [System.Obsolete]
-    void Update () {
 
+    void Update () {
+        //* SHAKING ANIM, not Jump.
         if (floppyControll.canswipe && !floppyControll.floppyInWormHole)
         {
 
@@ -42,9 +43,15 @@ public class SwipeDetector : MonoBehaviour
                 mStartPosition = new Vector2(Input.mousePosition.x,
                                              Input.mousePosition.y);
                 mSwipeStartTime = Time.time;
+                //* SHAKING ANIM, not Jump.
                 floppyControll.StartJumpAnim();
                 canSwipe = true;
             }
+            // */*
+
+            //Calculating user's input gestures
+            //If swiping to short - No movement
+            //If swiping to slow - No movement
             Vector2 endPosition = new Vector2(Input.mousePosition.x,
                                                    Input.mousePosition.y);
             Vector2 swipeVector = endPosition - mStartPosition;
@@ -57,6 +64,7 @@ public class SwipeDetector : MonoBehaviour
                 //Vector2 swipeVector = endPosition - mStartPosition;
 
                 float velocity = swipeVector.magnitude / deltaTime;
+                
 
                 if (velocity > mMinVelocity && canSwipe)
                 {
@@ -97,6 +105,7 @@ public class SwipeDetector : MonoBehaviour
                    // canRescale = true;
                 }
             }
+            //*/*
             else
             {
                //canRescale = true;

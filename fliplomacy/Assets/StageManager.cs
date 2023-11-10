@@ -235,6 +235,8 @@ public class StageManager : MonoBehaviour
 
     public GameManager gameManager;
     public bool UnlockIfWin = true;
+
+    //*FLOW: Level loading, displaying
     public void LoadLevelToScene()
     {
         if (stages[CurrentStage].CurentSelect >= 0)

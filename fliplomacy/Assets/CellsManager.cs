@@ -15,7 +15,7 @@ public class CellsManager : MonoBehaviour
     public UIManager uIManager;
     public GameManager gameManager;
 
-
+    //*FLOW: LEVEL START ANIM
     public void setUp()
     {
         for (int i = 1; i < gameObject.transform.childCount; i++)
@@ -36,6 +36,7 @@ public class CellsManager : MonoBehaviour
         DoStartAnim();
         
     }
+
     public void ClearLevel()
     {
         for (int i = 1; i < gameObject.transform.childCount; i++)
@@ -78,6 +79,8 @@ public class CellsManager : MonoBehaviour
         StartCoroutine(EndStartAnim(ftime + 0.05f));
 
     }
+
+    //*FLOW: When LEVEL START finishes, enable user's input (Swiping)
     IEnumerator EndStartAnim(float time)
     {
         yield return new WaitForSeconds(time);

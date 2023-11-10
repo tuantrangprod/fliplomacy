@@ -68,13 +68,19 @@ public class GameManager : MonoBehaviour
     [SerializeField] private AllCell[,] _allCells;
     [SerializeField] private AllCell floppyPosition = new AllCell(0,0,"0",null);
 
+
     public Object LevelSave;
+    
+    //STARTING POINT HERE
     private void Start()
     {
+        //MAIN CHAR
         floppyControll = Floppy.GetComponent<FloppyControll>();
        
         //CreateLevel();
     }
+
+    //TRIGGER LEVEL COMPLETE (ANIM, DATA CLEARANCE)
     public void ClearLevelHaveAnim()
     {
         FlagsAllCell.Clear();
@@ -93,6 +99,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(0.5f.Tweeng((p) => allCell.localScale = p, allCell.localScale, new Vector3(0, 0, 0)));
         StartCoroutine(ClearLevelHaveAnim1());
     }
+
     public IEnumerator ClearLevelHaveAnim1()
     {
         yield return new WaitForSeconds(0.5f);
@@ -122,6 +129,7 @@ public class GameManager : MonoBehaviour
         StartCoroutine(0.5f.Tweeng((p) => allCell.localScale = p, allCell.localScale, new Vector3(0, 0, 0)));
         StartCoroutine(ClearLevelAndReloadSceneHaveAnim1());
     }
+
     public IEnumerator ClearLevelAndReloadSceneHaveAnim1()
     {
         yield return new WaitForSeconds(0.5f);

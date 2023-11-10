@@ -19,6 +19,7 @@ public class FloppyControll : MonoBehaviour
         canswipe = false;
 
     }
+    //*
     public void SetUp()
     {
         
@@ -28,6 +29,7 @@ public class FloppyControll : MonoBehaviour
         floopySprite.gameObject.SetActive(true);
 
     }
+
     public void ClearLevel()
     {
         canswipe = false;
