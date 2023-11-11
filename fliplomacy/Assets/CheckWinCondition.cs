@@ -19,6 +19,7 @@ public class CheckWinCondition : MonoBehaviour
       
 
     }
+    //*FLOW: Listen to End jump Event. Each time, trigger WinCondition method
     public void RegisterEndJump()
     {
         floppy.EndJump += WinCondition;

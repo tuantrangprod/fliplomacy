@@ -122,7 +122,8 @@ public class SwipeDetector : MonoBehaviour
             }
         }
     }
-   
+
+    //*FLOW: TRIGGER Game Manager's movement logic system
     private void OnSwipeLeft() {
         gameManager.OnSwipeLeft();
         floppyControll.swipeDirection = "Left";

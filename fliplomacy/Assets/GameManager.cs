@@ -530,6 +530,7 @@ public class GameManager : MonoBehaviour
         //
     }
     [HideInInspector] public string swipeDirection;
+    //*FLOW: Movement management
     public void OnSwipeLeft() {
         swipeDirection = "Left";
         FloppyMove(-1,0);
@@ -552,11 +553,11 @@ public class GameManager : MonoBehaviour
 
     private void FloppyMove(int x, int y)
     {
-
+        //TARGET TILE
         var nextX = floppyPosition.x + x;
         var nextY = floppyPosition.y + y;
         List<GameObject> flagsInStep = new List<GameObject>();// dung cho flag tile
-
+        //CHECK: MAP BOUNDARY
         if (nextX < 5 && nextX >= 0 && nextY >= 0 && nextY < 5)// && _allCells[nextX, nextY].typeTile != 20)
         {
             if(_allCells[floppyPosition.x, floppyPosition.y].typeTile[0] == '5')
@@ -565,6 +566,7 @@ public class GameManager : MonoBehaviour
                 floppyControll.stillInMovingTile = true;
                 Debug.LogError(" FloppyInMovingTileGroup = true");
             }
+            //CHECK TARGET TYPE, TRIGGER TARGET TILE'S SPECIAL ABILITY 
             if (_allCells[nextX, nextY].typeTile == 1.ToString()) // flagtile
             {
                 FlagTileFunction(nextX, nextY, flagsInStep, x, y, floppyPosition.x, floppyPosition.y);
@@ -574,6 +576,7 @@ public class GameManager : MonoBehaviour
             {
                 DisappearingCheckOnIt(nextX, nextY);
             }
+            //* EMPTY TILE = 20
             else if (_allCells[nextX, nextY].typeTile == 20.ToString())
             {
                 //DisappearingHideTileFunction(nextX, nextY, x, y, floppyPosition.x, floppyPosition.x);
@@ -594,6 +597,7 @@ public class GameManager : MonoBehaviour
 
             }
             else
+            //*FLOW: NORMAL TILE THEN JUST MOVE
             {
                 FloppyJump(nextX, nextY);
             }

@@ -1,21 +1,21 @@
 ﻿<Properties StartupConfiguration="{2DD163D0-4BD0-AE0A-F930-D8F1481A1A24}|">
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/CheckWinCondition.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/GameManager.cs">
     <Files>
-      <File FileName="Assets/GameManager.cs" Line="601" Column="14" />
+      <File FileName="Assets/GameManager.cs" Line="109" Column="44" />
       <File FileName="Assets/SwipeDetector.cs" Line="146" Column="32" />
       <File FileName="Assets/UIManager.cs" Line="95" Column="6" />
       <File FileName="Assets/StageManager.cs" Line="247" Column="29" />
       <File FileName="Assets/NameGameAnimation.cs" Line="12" Column="31" />
       <File FileName="Assets/CellsManager.cs" Line="83" Column="70" />
-      <File FileName="Assets/FloppyControll.cs" Line="197" Column="27" />
-      <File FileName="Assets/CheckWinCondition.cs" Line="18" Column="36" />
+      <File FileName="Assets/FloppyControll.cs" Line="207" Column="6" />
+      <File FileName="Assets/CheckWinCondition.cs" Line="41" Column="23" />
     </Files>
     <Pads>
       <Pad Id="ProjectPad">
         <State name="__root__">
           <Node name="fliplomacy" expanded="True">
             <Node name="Assets" expanded="True">
-              <Node name="CheckWinCondition.cs" selected="True" />
+              <Node name="GameManager.cs" selected="True" />
             </Node>
           </Node>
         </State>
